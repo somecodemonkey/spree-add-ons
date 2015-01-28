@@ -1,7 +1,7 @@
 SpreeAddOns
 ===========
 
-Introduction goes here.
+This gem provides the ability to create custom addons for line_items. For example a product can have gift wrapping and/or packaging.
 
 Installation
 ------------

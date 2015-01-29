@@ -17,7 +17,7 @@ describe Spree::Product do
     # Go with this vvvvvvv, remember product has_many add_ons, it shouldn't be able to have the same add on twice though
     #
     # Alternatively we could set up a direct relation, seems a bit 'safer' than simply comparing strings like we've been doing
-    # let(:product) { create(:product, add_on_options: [create(:gift_package), create(:wrapping)]) }
+    # let(:product) { create(:product, add_ons: [create(:add_on), create(:add_on, sku: 'DEF-123')]) }
 
     describe "existing options" do
       it "can have gift package" do

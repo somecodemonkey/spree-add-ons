@@ -3,7 +3,7 @@ class CreateSpreeAddOns < ActiveRecord::Migration
     create_table :spree_add_ons do |t|
       t.string      :name,            null: false
       t.text        :description
-      t.string      :sku,             null: false
+      t.string      :sku,             null: false,    unique: true
       t.boolean     :active,          null: false,    default: true
       t.decimal     :price,           precision: 10,  scale: 2,     null: false
 

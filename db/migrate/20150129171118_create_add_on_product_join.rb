@@ -1,6 +1,6 @@
 class CreateAddOnProductJoin < ActiveRecord::Migration
   def change
-    create_join_table :spree_add_ons, :spree_products do |t|
+    create_table :spree_add_ons_products do |t|
       t.integer :add_on_id
       t.integer :product_id
 

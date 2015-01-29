@@ -3,20 +3,20 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'spree_add_ons'
   s.version     = '2.4.1'
-  s.summary     = 'TODO: Add gem summary here'
-  s.description = 'TODO: Add (optional) gem description here'
+  s.summary     = 'Allows products to have add ons with corresponding features and fees.'
+  s.description = 'See summary.'
   s.required_ruby_version = '>= 1.9.3'
 
-  # s.author    = 'You'
-  # s.email     = 'you@example.com'
-  # s.homepage  = 'http://www.spreecommerce.com'
+  s.author    = "Darby Perez, Anthony D'addeo"
+  s.email     = 'darby@personalwine.com, anthony@personalwine.com'
+  s.homepage  = 'http://www.personalwine.com'
 
   #s.files       = `git ls-files`.split("\n")
   #s.test_files  = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.require_path = 'lib'
   s.requirements << 'none'
 
-  s.add_dependency 'spree_core', '~> 2.4.1'
+  s.add_dependency 'spree_core', '~> 2.4.2'
 
   s.add_development_dependency 'capybara', '~> 2.4'
   s.add_development_dependency 'coffee-rails'

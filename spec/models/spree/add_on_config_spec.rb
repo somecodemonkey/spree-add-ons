@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe Spree::AddOns::Config do
+# describe Spree::AddOn::Config do
 
   # Potential configs
   # active - (de)activate all addon fees
 
-end
+# end

@@ -13,6 +13,9 @@ describe Spree::Product do
     # Currently using Spree-item-designs as a model we would something like this
     # let(:product) { create(:product, add_on_options: ["gift_package", "wrapping"]) }
     #
+    # Daddeo
+    # Go with this vvvvvvv, remember product has_many add_ons, it shouldn't be able to have the same add on twice though
+    #
     # Alternatively we could set up a direct relation, seems a bit 'safer' than simply comparing strings like we've been doing
     # let(:product) { create(:product, add_on_options: [create(:gift_package), create(:wrapping)]) }
 

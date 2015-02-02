@@ -2,25 +2,35 @@ require 'spec_helper'
 
 describe Spree::LineItem do
 
-  context "can have an addon" do
+  let(:product) { create(:product, add_ons: [create(:add_on), create(:add_on, sku: 'DEF-123')]) }
+  let(:line_item) { create(:line_item, variant: create(:variant, product: product)) }
 
-    let(:line_item) { create(:line_item) }
-    let(:product) { create(:product, add_ons: [create(:add_on), create(:add_on, sku: 'DEF-123')]) }
 
-    describe '.discounted_amount' do
-      it "returns the amount minus any discounts and includes add_on fees" do
-      end
+  context "no current addons" do
+    it "should create the adjustments" do
+      line_item.add_add_ons(product.add_ons)
+      expect(line_item.adjustments.count).to eq 2
+      expect(line_item.adjustments.map(&:id) - product.add_ons.map(&:id)).to be_empty
     end
 
-    context '.update_item_adjustments' do
+    it "calculates the discounted amount" do
+      line_item.add_add_ons(product.add_ons)
+      expect(line_item.discounted_amount).to eql 15.00
+    end
 
-      before do
-        line_item.variant.product = product
-      end
+    it "correctly updates the price" do
+      line_item.quantity = 3
+      line_item.add_add_ons(product.add_ons)
+      line_item.save!
+      expect(line_item.discounted_amount).to eql 90.00
+    end
+  end
 
-      it "returns the amount minus any discounts and includes add_on fees" do
-        line_item.adjust_add_ons
-      end
+  context "with current addons" do
+    it "does not duplicate adjusmtents" do
+      line_item.add_ons = [product.add_ons, product.add_ons]
+      expect(line_item.adjustments.count).to eq 2
+      expect(line_item.add_ons.map(&:id) - product.add_ons.map(&:id)).to be_empty
     end
   end
 

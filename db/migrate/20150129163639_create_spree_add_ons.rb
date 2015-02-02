@@ -2,6 +2,7 @@ class CreateSpreeAddOns < ActiveRecord::Migration
   def change
     create_table :spree_add_ons do |t|
       t.string      :name,            null: false
+      t.string      :type
       t.text        :description
       t.string      :sku,             null: false,    unique: true
       t.boolean     :active,          null: false,    default: true

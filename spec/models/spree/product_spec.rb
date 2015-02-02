@@ -4,7 +4,9 @@ describe Spree::Product do
 
   describe "Model" do
 
-    it "requires add_on options" do
+    it "enforces unique options" do
+      add_on = create(:add_on)
+      FactoryGirl.build(:product, add_ons: [add_on, add_on]).should_not be_valid
     end
 
   end

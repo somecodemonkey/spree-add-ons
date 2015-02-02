@@ -18,7 +18,7 @@ class Spree::AddOn < Spree::Base
   has_many :adjustments, as: :source
   has_and_belongs_to_many :products
 
-  delegate :adjust, to: :adjuster
+  delegate :adjust, :compute_amount, to: :adjuster
 
   def adjuster
     @adjuster ||= Spree::AddOnAdjuster.new(self)

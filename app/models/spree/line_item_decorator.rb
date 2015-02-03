@@ -36,11 +36,7 @@ Spree::LineItem.class_eval do
   end
 
   def add_ons=(*new_add_ons)
-    add_ons.concat(new_add_ons.flatten!).each { |add_on| add_on.adjust(self) }
-  end
-
-  def add_add_ons(*add_ons)
-    add_ons.flatten!.each { |add_on| add_on.adjust(self) }
+    new_add_ons.flatten!.each { |add_on| add_on.adjust(self) }
   end
 
   private

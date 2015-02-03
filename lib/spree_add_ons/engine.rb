@@ -14,6 +14,12 @@ module SpreeAddOns
         Rails.configuration.cache_classes ? require(c) : load(c)
       end
 
+      if Rails.env.test?
+        Dir.glob(File.join(File.dirname(__FILE__), './overrides/**/*_decorator*.rb')) do |c|
+          Rails.configuration.cache_classes ? require(c) : load(c)
+        end
+      end
+
       if Spree::LineItem.table_exists?
         Spree::LineItem.register_price_modifier_hook(:add_on_total)
       end

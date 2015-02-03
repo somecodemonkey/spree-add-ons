@@ -3,27 +3,6 @@ Spree::LineItem.class_eval do
   after_save :update_add_on_adjustments
   after_save :persist_add_on_total
 
-  #####################################
-  # TODO remove this once/if integrated
-  #  For now integrate this into pw
-  class_attribute :price_modifier_hooks
-  self.price_modifier_hooks = Set.new
-
-  def discounted_amount
-    amount + hook_totals
-  end
-
-  def hook_totals
-    price_modifier_hooks.map { |hook|
-      self.send(hook)
-    }.sum
-  end
-
-  def self.register_price_modifier_hook(hook)
-    self.price_modifier_hooks.add(hook)
-  end
-  #####################################
-
   # potential optimization here
   def add_on_total
     adjustments.add_ons.reload.map do |adjustment|

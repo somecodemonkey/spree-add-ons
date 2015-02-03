@@ -12,7 +12,7 @@ module Spree
       add_on.adjustments.destroy_all
 
       amount = compute_amount(item)
-      puts "Adjuster be adjusting #{amount > 0 && is_new?(item)}"
+      puts "Adjuster #{name} be adjusting #{amount > 0 && is_new?(item)}"
 
       add_on.adjustments.create!({
                                      adjustable: item,

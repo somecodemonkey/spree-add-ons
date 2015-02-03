@@ -15,13 +15,12 @@ describe Spree::LineItem do
 
     it "calculates the discounted amount" do
       line_item.add_add_ons(product.add_ons)
-      expect(line_item.discounted_amount).to eql 15.00
+      expect(line_item.discounted_amount).to eql 30.00
     end
 
     it "correctly updates the price" do
       line_item.quantity = 3
       line_item.add_add_ons(product.add_ons)
-      line_item.save!
       expect(line_item.discounted_amount).to eql 90.00
     end
   end

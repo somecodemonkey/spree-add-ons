@@ -1,6 +1,7 @@
 Spree::LineItem.class_eval do
 
   after_save :update_add_on_adjustments
+  after_save :persist_add_on_total
 
   ###############
   # TODO remove this once/if integrated
@@ -9,14 +10,12 @@ Spree::LineItem.class_eval do
   self.price_modifier_hooks = Set.new
 
   def discounted_amount
-    puts "wtf"
     amount + hook_totals
   end
 
   def hook_totals
-    puts "WHAT WHAT"
     price_modifier_hooks.map { |hook|
-      self.send(hook, self)
+      self.send(hook)
     }.sum
   end
 
@@ -25,10 +24,11 @@ Spree::LineItem.class_eval do
   end
   ###############
 
-  # TODO do something about these...
-  def add_on_total(line_item = nil)
-    puts attributes["add_on_total"].inspect
-    attributes["add_on_total"]
+  # potential optimization here
+  def add_on_total
+    adjustments.add_ons.reload.map do |adjustment|
+      adjustment.update!(self)
+    end.compact.sum
   end
 
   def add_ons
@@ -49,19 +49,15 @@ Spree::LineItem.class_eval do
     puts "Checking whether to update adjustments #{quantity_changed?} - #{quantity}"
     if quantity_changed?
       add_ons.each { |add_on| add_on.adjust(self) }
-      persist_add_on_total
     end
   end
 
   def persist_add_on_total
     if quantity_changed?
-      add_on_total = adjustments.add_ons.reload.map do |adjustment|
-        adjustment.update!(self)
-      end.compact.sum
-      puts "Persisting add on totals #{add_on_total}"
-
+      total = add_on_total
+      puts "Persisting add on totals #{total}"
       update_columns(
-          :add_on_total => add_on_total#,
+          :add_on_total => total#,
           # :adjustment_total => adjustment_total + add_on_total
       )
     end

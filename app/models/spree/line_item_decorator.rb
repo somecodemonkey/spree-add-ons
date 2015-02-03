@@ -53,8 +53,8 @@ Spree::LineItem.class_eval do
       total = add_on_total
       puts "Persisting add on totals #{total}"
       update_columns(
-          :add_on_total => total#,
-          # :adjustment_total => adjustment_total + add_on_total
+          # :adjustment_total => adjustment_total + add_on_total,
+          :add_on_total => total
       )
     end
   end

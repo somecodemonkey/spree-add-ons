@@ -16,6 +16,9 @@ ENV['RAILS_ENV'] = 'test'
 require File.expand_path('../dummy/config/environment.rb',  __FILE__)
 
 require 'rspec/rails'
+require 'rspec/mocks'
+require 'shoulda/matchers'
+require 'shoulda-callback-matchers'
 require 'database_cleaner'
 require 'ffaker'
 

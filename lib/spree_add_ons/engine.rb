@@ -18,6 +18,10 @@ module SpreeAddOns
         # persist the totals
         Spree::LineItem.register_price_modifier_hook(:add_on_total)
       end
+
+      if Spree::Order.table_exists?
+        Spree::Order.register_line_item_comparison_hook(:add_on_matcher)
+      end
     end
 
     config.to_prepare &method(:activate).to_proc

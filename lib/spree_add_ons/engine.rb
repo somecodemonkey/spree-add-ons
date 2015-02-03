@@ -15,7 +15,6 @@ module SpreeAddOns
       end
 
       if Spree::LineItem.table_exists?
-        # persist the totals
         Spree::LineItem.register_price_modifier_hook(:add_on_total)
       end
 

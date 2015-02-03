@@ -24,7 +24,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'factory_girl', '~> 4.5'
   s.add_development_dependency 'ffaker'
   s.add_development_dependency 'rspec-rails',  '~> 3.1'
-  s.add_development_dependency 'rspec-mocks',  '~> 3.1'
+  s.add_development_dependency 'rspec-activemodel-mocks',  '~> 1.0.1'
   s.add_development_dependency 'shoulda-matchers',  '~> 2.8.0'
   s.add_development_dependency 'shoulda-callback-matchers', '~> 1.1.1'
   s.add_development_dependency 'sass-rails', '~> 4.0.2'

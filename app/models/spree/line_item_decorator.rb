@@ -3,7 +3,7 @@ Spree::LineItem.class_eval do
   after_save :update_add_on_adjustments
   after_save :persist_add_on_total
 
-  ###############
+  #####################################
   # TODO remove this once/if integrated
   #  For now integrate this into pw
   class_attribute :price_modifier_hooks
@@ -22,7 +22,7 @@ Spree::LineItem.class_eval do
   def self.register_price_modifier_hook(hook)
     self.price_modifier_hooks.add(hook)
   end
-  ###############
+  #####################################
 
   # potential optimization here
   def add_on_total
@@ -42,7 +42,6 @@ Spree::LineItem.class_eval do
   private
 
   def update_add_on_adjustments
-    puts "Checking whether to update adjustments #{quantity_changed?} - #{quantity}"
     if quantity_changed?
       add_ons.each { |add_on| add_on.adjust(self) }
     end
@@ -50,11 +49,8 @@ Spree::LineItem.class_eval do
 
   def persist_add_on_total
     if quantity_changed?
-      total = add_on_total
-      puts "Persisting add on totals #{total}"
       update_columns(
-          # :adjustment_total => adjustment_total + add_on_total,
-          :add_on_total => total
+          :add_on_total => add_on_total
       )
     end
   end

@@ -16,6 +16,27 @@ describe Spree::AddOnAdjuster do
       expect(add_on.adjustments.count).to eq 1
     end
 
+    it "will not duplicate adjustments" do
+      allow(adjuster).to receive(:is_new?).and_return(true)
+      adjuster.adjust(line_item)
+      adjuster.adjust(line_item)
+      expect(add_on.adjustments.count).to eq 1
+    end
+
+    it "wont create adjustment for inactive addons" do
+      allow(adjuster).to receive(:active).and_return(false)
+      allow(adjuster).to receive(:is_new?)
+      adjuster.adjust(line_item)
+      expect(add_on.adjustments.count).to eq 0
+    end
+
+    it "wont create adjustment for 0 price addons" do
+      allow(adjuster).to receive(:compute_amount).and_return(0)
+      allow(adjuster).to receive(:is_new?)
+      adjuster.adjust(line_item)
+      expect(add_on.adjustments.count).to eq 0
+    end
+
     it "should compute correclty" do
       expect(adjuster.compute_amount(line_item)).to eq 10
     end

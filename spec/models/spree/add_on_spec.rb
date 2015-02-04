@@ -24,32 +24,6 @@ describe Spree::AddOn do
     end
   end
 
-  describe "adjustments" do
-
-    context "create" do
-      it "creates adjustments for valid addons" do
-      end
-
-      it "will not duplicate adjustments" do
-      end
-
-      it "wont create adjustment for inactive addons" do
-      end
-    end
-
-    context "remove" do
-      before do
-        # create and add on the adjustments
-      end
-
-      it "removes the adjustments" do
-        # remove the add_on
-      end
-
-    end
-
-  end
-
   describe "#images" do
     let(:add_on) { create(:add_on) }
     let(:image) { File.open(File.expand_path('../../../fixtures/nacho_taco.png', __FILE__)) }

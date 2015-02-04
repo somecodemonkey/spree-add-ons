@@ -1,19 +1,22 @@
 module Spree
   class AddOnAdjuster
     attr_reader :add_on
-    delegate :price, :name, to: :add_on
+    delegate :price, :name, :active, to: :add_on
 
     def initialize(add_on)
-      add_on.reload if add_on.persisted?
       @add_on = add_on
+      add_on.reload if add_on.persisted?
     end
 
     def adjust(item)
-      add_on.adjustments.destroy_all
+      adjustment = adjustment_for(item)
+      adjustment.destroy if adjustment.present?
 
+      create_adjustment(item) if can_do?(item)
+    end
+
+    def create_adjustment(item)
       amount = compute_amount(item)
-      puts "Adjuster #{name} be adjusting #{amount > 0 && is_new?(item)}"
-
       add_on.adjustments.create!({
                                      adjustable: item,
                                      amount: amount,
@@ -21,7 +24,7 @@ module Spree
                                      order_id: item.order_id,
                                      label: name_with_amount(amount),
                                      included: false
-                                 }) if amount > 0 && is_new?(item)
+                                 })
     end
 
     def compute_amount(item)
@@ -34,8 +37,12 @@ module Spree
 
     private
 
-    def is_new?(item)
-      add_on.adjustments.where(adjustable_id: item.id).empty?
+    def adjustment_for(item)
+      add_on.adjustments.where(adjustable_id: item.id).first
+    end
+
+    def can_do?(item)
+      active && compute_amount(item) > 0
     end
   end
 end

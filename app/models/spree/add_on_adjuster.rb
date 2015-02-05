@@ -8,6 +8,7 @@ module Spree
       add_on.reload if add_on.persisted?
     end
 
+    # TODO only create/update when dirty
     def adjust(item)
       adjustment = adjustment_for(item)
       adjustment.destroy if adjustment.present?

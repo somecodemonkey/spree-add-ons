@@ -2,7 +2,7 @@
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'spree_add_ons'
-  s.version     = '2.4.1'
+  s.version     = '2.4.6'
   s.summary     = 'Allows products to have add ons with corresponding features and fees.'
   s.description = 'See summary.'
   s.required_ruby_version = '>= 1.9.3'
@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
   s.requirements << 'none'
 
-  s.add_dependency 'spree_core', '~> 2.4.2'
+  s.add_dependency 'spree_core', '~> 2.4.6'
 
   s.add_development_dependency 'capybara', '~> 2.4'
   s.add_development_dependency 'coffee-rails'

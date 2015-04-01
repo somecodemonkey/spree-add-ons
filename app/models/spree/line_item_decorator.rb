@@ -4,11 +4,11 @@ Spree::LineItem.class_eval do
   after_save :persist_add_on_total
 
   # potential optimization here
-  def add_on_total
-    adjustments.add_ons.reload.map do |adjustment|
-      adjustment.update!(self)
-    end.compact.sum
-  end
+  # def add_on_total
+  #   adjustments.add_ons.reload.map do |adjustment|
+  #     adjustment.update!(self)
+  #   end.compact.sum
+  # end
 
   def add_ons
     adjustments.add_ons.map(&:source)

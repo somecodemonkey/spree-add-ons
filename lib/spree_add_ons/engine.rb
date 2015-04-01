@@ -22,6 +22,10 @@ module SpreeAddOns
         if Spree::LineItem.table_exists?
           Spree::LineItem.register_price_modifier_hook(:add_on_total)
         end
+
+        if Spree::Adjustment.table_exists?
+          Spree::ItemAdjustments.register_item_adjustment_hook(:update_add_on_adjustments)
+        end
       end
 
       if Spree::Order.table_exists?

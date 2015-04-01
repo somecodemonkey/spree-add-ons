@@ -1,5 +1,8 @@
 require 'spec_helper'
 
+class Spree::Bag < Spree::AddOn
+end
+
 describe Spree::AddOn do
 
   describe "Model" do
@@ -21,6 +24,15 @@ describe Spree::AddOn do
 
     it "requires sku" do
       FactoryGirl.build(:add_on, sku: nil).should_not be_valid
+    end
+
+    describe "STI" do
+      describe "#create" do
+        it "should work" do
+          expect{ Spree::Bag.create(name: "This is a bag yo!", price: 3.50, sku: "YO-BAG") }.to_not raise_error
+        end
+      end
+
     end
   end
 

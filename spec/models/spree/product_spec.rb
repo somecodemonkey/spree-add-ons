@@ -3,23 +3,18 @@ require 'spec_helper'
 describe Spree::Product do
 
   describe "Model" do
-
+    ## validate sti as well?
     it "enforces unique options" do
       add_on = create(:add_on)
       FactoryGirl.build(:product, add_ons: [add_on, add_on]).should_not be_valid
     end
-
   end
 
   describe "add_on options" do
-    # Currently using Spree-item-designs as a model we would something like this
-    # let(:product) { create(:product, add_on_options: ["gift_package", "wrapping"]) }
-    #
-    # Daddeo
-    # Go with this vvvvvvv, remember product has_many add_ons, it shouldn't be able to have the same add on twice though
-    #
-    # Alternatively we could set up a direct relation, seems a bit 'safer' than simply comparing strings like we've been doing
     # let(:product) { create(:product, add_ons: [create(:add_on), create(:add_on, sku: 'DEF-123')]) }
+
+    let(:add_on_one) { create(:other_add_on) }
+    let(:add_on_two) { create(:other_other_add_on) }
 
     describe "existing options" do
       it "can have gift package" do

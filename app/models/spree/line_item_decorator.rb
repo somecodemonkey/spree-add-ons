@@ -1,5 +1,7 @@
 Spree::LineItem.class_eval do
 
+  validate :ensure_valid_add_ons, on: [:create, :update]
+
   after_save :update_add_on_adjustments
   after_save :persist_add_on_total
 
@@ -31,6 +33,12 @@ Spree::LineItem.class_eval do
       update_columns(
           :add_on_total => add_on_total
       )
+    end
+  end
+
+  def ensure_valid_add_ons
+    unless add_ons.empty? || (add_ons - product.add_ons).empty?
+      errors.add(:add_on, "is invalid")
     end
   end
 

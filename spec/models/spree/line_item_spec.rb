@@ -4,10 +4,16 @@ describe Spree::LineItem do
 
   let(:product) { create(:product, add_ons: [create(:add_on), create(:add_on, sku: 'DEF-123')]) }
   let(:line_item) { create(:line_item, variant: create(:variant, product: product)) }
+  let(:other_add_on) { create(:other_add_on) }
 
   context "callbacks" do
     it { expect(line_item).to callback(:update_add_on_adjustments).after(:save) }
     it { expect(line_item).to callback(:persist_add_on_total).after(:save) }
+  end
+
+  it "only allows valid add ons" do
+    line_item.add_ons = [other_add_on]
+    expect{ line_item.save! }.to raise_error
   end
 
   context "no current addons" do

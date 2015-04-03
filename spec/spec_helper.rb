@@ -33,6 +33,10 @@ require 'spree/testing_support/controller_requests'
 require 'spree/testing_support/factories'
 require 'spree/testing_support/url_helpers'
 
+require 'spree/testing_support/preferences'
+require 'spree/api/testing_support/helpers'
+require 'spree/api/testing_support/setup'
+
 # Requires factories defined in lib/spree_add_ons/factories.rb
 require 'spree_add_ons/factories'
 
@@ -48,7 +52,15 @@ RSpec.configure do |config|
   #
   # visit spree.admin_path
   # current_path.should eql(spree.products_path)
-  config.include Spree::TestingSupport::UrlHelpers
+  config.include FactoryGirl::Syntax::Methods
+  config.include Spree::Api::TestingSupport::Helpers, :type => :controller
+  config.extend Spree::Api::TestingSupport::Setup, :type => :controller
+  config.include Spree::TestingSupport::Preferences, :type => :controller
+
+  # Require testing support
+  # primarily spree_auth_devise
+  config.include Spree::TestingSupport::ControllerRequests, :type => :controller
+  config.include Spree::TestingSupport::UrlHelpers, :type => :controller
 
   # == Mock Framework
   #
@@ -83,6 +95,11 @@ RSpec.configure do |config|
   # After each spec clean the database.
   config.after :each do
     DatabaseCleaner.clean
+  end
+
+  config.before do
+    Spree.user_class = "Spree::User"
+    Spree::Api::Config[:requires_authentication] = false
   end
 
   config.fail_fast = ENV['FAIL_FAST'] || false

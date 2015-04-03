@@ -20,8 +20,16 @@ class Spree::AddOn < Spree::Base
 
   delegate :adjust, :compute_amount, to: :adjuster
 
+  after_save :touch_products
+
   def adjuster
     @adjuster ||= Spree::AddOnAdjuster.new(self)
+  end
+
+  private
+
+  def touch_products
+    products.each(&:touch)
   end
 
 end

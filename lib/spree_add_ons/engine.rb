@@ -31,6 +31,13 @@ module SpreeAddOns
       if Spree::Order.table_exists?
         Spree::Order.register_line_item_comparison_hook(:add_on_matcher)
       end
+
+      # Eager load classes into memory so we can know which subclasses exist
+      unless Rails.env.production?
+        ActionDispatch::Reloader.to_prepare do
+          Rails.application.eager_load!
+        end
+      end
     end
 
     config.to_prepare &method(:activate).to_proc

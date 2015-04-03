@@ -1,8 +1,6 @@
 Spree::Order.class_eval do
 
-  # def add_on_total
-    # line_item_adjustments.add_ons.eligible.sum(:amount) || 0
-  # end
+  after_save :line_item_add_ons
 
   def display_add_on_total
     Spree::Money.new(add_on_total, {currency: currency})
@@ -14,4 +12,11 @@ Spree::Order.class_eval do
     return line_item.add_ons.present? && options.present? && (line_item.add_ons.map(&:id) - options[:add_ons]).empty?
   end
 
+  def line_item_add_ons
+    if line_items.any? { |li| li.add_ons.present? && li.invalid? }
+      # Force rollback because add_ons are not created until line_item is after_update(save)
+      # because line_items will not have an order until then
+      raise ActiveRecord::Rollback
+    end
+  end
 end

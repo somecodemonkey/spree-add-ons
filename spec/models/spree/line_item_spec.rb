@@ -7,7 +7,6 @@ describe Spree::LineItem do
   let(:other_add_on) { create(:other_add_on) }
 
   context "callbacks" do
-    it { expect(line_item).to callback(:update_add_on_adjustments).after(:save) }
     it { expect(line_item).to callback(:persist_add_on_total).after(:save) }
   end
 
@@ -17,10 +16,10 @@ describe Spree::LineItem do
   end
 
   context "no current addons" do
-    it "should 'create' the add ons" do
-      expect(product.add_ons[0]).to receive(:adjust).with(line_item)
-      expect(product.add_ons[1]).to receive(:adjust).with(line_item)
+    it "should 'create' the add on adjustments" do
+      # TODO more robust test
       line_item.add_ons = product.add_ons
+      expect(line_item.adjustments.add_ons.count).to eql 2
     end
 
     it "calculates the discounted amount" do

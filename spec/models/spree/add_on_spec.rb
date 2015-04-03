@@ -5,7 +5,7 @@ end
 
 describe Spree::AddOn do
 
-  describe "Model" do
+  describe "Validations" do
     it "has a valid factory" do
       FactoryGirl.build(:add_on).should be_valid
     end
@@ -34,6 +34,12 @@ describe Spree::AddOn do
       end
 
     end
+  end
+
+  describe "callbacks" do
+    let(:add_on) { create(:add_on) }
+
+    it { expect(add_on).to callback(:touch_products).after(:save) }
   end
 
   describe "#images" do

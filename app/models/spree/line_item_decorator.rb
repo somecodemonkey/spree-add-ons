@@ -33,14 +33,6 @@ module Spree
       ensure_valid_add_ons(true)
     end
 
-    def update_add_on_adjustments
-      # create add ons if we update a line item to have some
-      create_add_on_adjustments if @add_on_ids.present?
-      if quantity_changed?
-        add_ons.each { |add_on| add_on.adjust(self) }
-      end
-    end
-
     def persist_add_on_total
       update_columns(:add_on_total => add_on_total)
     end

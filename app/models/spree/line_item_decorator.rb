@@ -4,7 +4,6 @@ module Spree
 
     after_save :create_add_on_adjustments
     after_save :persist_add_on_total
-    after_save :ensure_valid_add_ons
 
     attr_accessor :add_on_ids
 
@@ -30,14 +29,14 @@ module Spree
         @add_on_ids = nil
       end
 
-      ensure_valid_add_ons(true)
+      ensure_valid_add_ons
     end
 
     def persist_add_on_total
       update_columns(:add_on_total => add_on_total)
     end
 
-    def ensure_valid_add_ons(raise = false)
+    def ensure_valid_add_ons
       invalid_add_ons = add_ons - product.add_ons
       unless add_ons.empty? || invalid_add_ons.empty?
         invalid_message = invalid_add_ons.map { |add| add.name }.join(", ") + (invalid_add_ons.length > 1 ? " are" : " is")

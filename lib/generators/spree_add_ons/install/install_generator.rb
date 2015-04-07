@@ -26,6 +26,17 @@ module SpreeAddOns
           puts 'Skipping rake db:migrate, don\'t forget to run it!'
         end
       end
+
+      def configure_application
+        application <<-APP
+          config.to_prepare do
+            Dir.glob("#{File.join(File.dirname(__FILE__), 'templates/**/*.rb')}") do |c|
+              Rails.configuration.cache_classes ? require(c) : load(c)
+            end
+          end
+        APP
+      end
+
     end
   end
 end

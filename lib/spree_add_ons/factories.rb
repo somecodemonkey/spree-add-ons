@@ -1,11 +1,5 @@
 FactoryGirl.define do
 
-  class Spree::OtherAddOn < Spree::AddOn
-  end
-
-  class Spree::OtherOtherAddOn < Spree::AddOn
-  end
-
   factory :add_on, class: Spree::AddOn do
     name "bag"
     description "This is my bag. There are many like it, but this one is mine."

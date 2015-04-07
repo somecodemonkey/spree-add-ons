@@ -26,6 +26,11 @@ class Spree::AddOn < Spree::Base
     @adjuster ||= Spree::AddOnAdjuster.new(self)
   end
 
+  # override this
+  def self.display_name
+    'Add On'
+  end
+
   private
 
   def touch_products

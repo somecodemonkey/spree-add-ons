@@ -1,0 +1,48 @@
+<%= render 'spree/admin/shared/configuration_menu' %>
+
+<% content_for :page_title do %>
+    Add On
+<% end %>
+
+<% content_for :page_actions do %>
+    <ul class="actions inline-menu">
+      <li>
+        <%= button_link_to "New Add On", new_object_url, :icon => 'plus', :id => 'admin_new_add_ons_link' %>
+      </li>
+    </ul>
+<% end %>
+
+<% if @add_ons.present? %>
+    <table class="index">
+      <colgroup>
+        <col style="width: 15%;">
+        <col style="width: 10%;">
+        <col style="width: 48%;">
+        <col style="width: 10%;">
+        <col style="width: 17%;">
+      </colgroup>
+      <thead>
+        <tr data-hook="admin_add_ons_index_headers">
+            <th>SKU</th>
+            <th colspan="2">Name</th>
+            <th>Type</th>
+            <th>Active</th>
+        </tr>
+      </thead>
+      <tbody>
+      <% @add_ons.each do |add_on| %>
+      <tr id="add_on_<%= add_on.id%>">
+        <td class="align-center"><%= add_on.sku %></td>
+        <td class="align-center">Img</td>
+        <td><%= add_on.name %></td>
+        <td class="align-center"><%= add_on.class.display_name %></td>
+        <td class="align-center"><%= add_on.active %></td>
+        <td class="actions" data-hook="admin_products_index_row_actions">
+          <a class="edit fa fa-edit icon_link with-tip no-text" data-action="edit" href=""></a>
+          <a class="delete-resource fa fa-trash icon_link with-tip no-text" data-action="remove" data-confirm="Are you sure?" href=""></a>
+        </td>
+      </tr>
+      <% end %>
+      </tbody>
+    </table>
+<% end %>

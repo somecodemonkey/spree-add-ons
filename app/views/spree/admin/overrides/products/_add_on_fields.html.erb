@@ -1,0 +1,28 @@
+<div style="margin-top: 30px;">
+  <fieldset class="no-border-bottom">
+    <legend align="center">Customization Options</legend>
+
+    <div class="row">
+      <div class="twelve columns">
+        <%= f.field_container :add_ons do %>
+            <%= f.label :add_ons, "Add On Options" %>
+            <%= f.hidden_field :add_on_ids %>
+            <%= f.error_message_on :add_ons %>
+        <% end %>
+      </div>
+    </div>
+
+  </fieldset>
+</div>
+
+<script>
+    $(document).ready(function () {
+        var productAddOns = $('#product_add_on_ids');
+        productAddOns.select2({
+            placeholder: "Select Add On(s)",
+            tags: <%= raw Spree::AddOn.all.map {|add_on| {id: add_on.id, text: add_on.name}}.to_json %>,
+            multiple: true
+        });
+        productAddOns.select2('val', <%== @product.add_ons.map{|add_on| add_on.id}.to_json %>);
+    });
+</script>

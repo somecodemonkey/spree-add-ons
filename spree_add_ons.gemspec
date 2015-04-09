@@ -17,6 +17,9 @@ Gem::Specification.new do |s|
   s.requirements << 'none'
 
   s.add_dependency 'spree_core', '~> 2.4.6'
+  s.add_dependency 'slim'
+  s.add_dependency 'active_model_serializers'
+  # s.add_dependency 'unscoped_associations'
 
   s.add_development_dependency 'capybara', '~> 2.4'
   s.add_development_dependency 'coffee-rails'

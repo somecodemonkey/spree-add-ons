@@ -21,8 +21,6 @@
   </div>
 
   <div class="row">
-    <%= Spree::AddOn.subclasses.collect{ |klass| [klass.display_name, klass.name] } %>
-
     <div class="four columns omega">
       <%= f.field_container :type do %>
           <%= f.label :type, Spree.t(:type) %>

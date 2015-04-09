@@ -1,8 +1,8 @@
 module Spree
   Adjustment.class_eval do
-    SUBCLASSES = Spree::AddOn.subclasses.map{|c| c.name}
+    SUBCLASSES = Spree::AddOn.subclasses.map{|c| c.name}.push("Spree::AddOn")
 
-    scope :add_ons, -> { where(source_type: SUBCLASSES.push("Spree::AddOn")) }
+    scope :add_ons, -> { where(source_type: SUBCLASSES) }
 
     SUBCLASSES.each do |subclass|
       name = subclass.split("::")[1].split(/(?=[A-Z])/).join("_") + "s"

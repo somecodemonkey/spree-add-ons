@@ -5,3 +5,9 @@ en:
   spree:
     unique_add_ons: Product add ons must be unique!
 
+  activerecord:
+    models:
+      spree/add_on:
+          other: "Add On"
+          one: "Other"
+

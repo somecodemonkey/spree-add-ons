@@ -19,6 +19,10 @@ module SpreeAddOns
           Rails.configuration.cache_classes ? require(c) : load(c)
         end
 
+        Dir.glob("#{File.join(File.dirname(__FILE__), './templates/**/*.rb')}") do |c|
+          Rails.configuration.cache_classes ? require(c) : load(c)
+        end
+
         if Spree::LineItem.table_exists?
           Spree::LineItem.register_price_modifier_hook(:add_on_total)
         end
@@ -30,12 +34,13 @@ module SpreeAddOns
 
       if Spree::Order.table_exists?
         Spree::Order.register_line_item_comparison_hook(:add_on_matcher)
+        Spree::Order.register_update_hook(:persist_add_on_totals)
       end
 
       # Eager load classes into memory so we can know which subclasses exist
       unless Rails.env.production?
         ActionDispatch::Reloader.to_prepare do
-          Rails.application.eager_load!
+          # Rails.application.eager_load!
         end
       end
     end

@@ -6,12 +6,12 @@ describe Spree::Order, :type => :model do
   let(:bag) { create(:other_add_on) }
   let(:box) { create(:other_other_add_on) }
 
-  let(:product) { create(:product, add_ons: [bag, box]) }
-  let(:product_two) { create(:product, add_ons: [bag]) }
+  let!(:product) { create(:product, add_ons: [bag, box]) }
+  let!(:product_two) { create(:product, add_ons: [bag]) }
 
-  let(:line_item) { create(:line_item, variant: create(:variant, product: product)) }
-  let(:line_item_two) { create(:line_item, variant: create(:variant, product: product_two)) }
-  let!(:order) { create(:order, line_items: [line_item, line_item_two]) }
+  let!(:line_item) { create(:line_item, variant: create(:variant, product: product)) }
+  # let!(:line_item_two) { create(:line_item, variant: create(:variant)) }
+  let!(:order) { create(:order, line_items: [line_item]) }
 
   before do
     allow(Spree::User).to receive_messages(:current => mock_model(Spree::User, :id => 123))
@@ -19,7 +19,8 @@ describe Spree::Order, :type => :model do
 
   describe "add_on match" do
     before do
-      order.line_items.first.add_ons = product.add_ons
+      line_item.add_ons = product.add_ons
+      order.line_items.first.reload
     end
 
     it "matches to the correct line item with add ones" do
@@ -43,20 +44,14 @@ describe Spree::Order, :type => :model do
 
     it "returns false with no product add ons" do
       options = {add_on_ids: product_two.add_ons.map(&:id)}
-      expect(order.add_on_matcher(order.line_items.second, options)).to be false
-    end
-  end
-
-  describe "with invalid add ons" do
-    it "should mark the order invalid" do
-      line_item_two.add_ons = [box]
-      expect(order.reload.invalid?).to be true
+      expect(order.add_on_matcher(order.line_items.first, options)).to be false
     end
   end
 
   describe "when add on is deleted" do
     before do
       order.line_items.first.add_ons = product.add_ons
+      order.line_items.first.reload
     end
 
     it "should mark the order invalid" do

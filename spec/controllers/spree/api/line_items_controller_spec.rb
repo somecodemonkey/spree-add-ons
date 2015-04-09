@@ -40,6 +40,9 @@ module Spree
                      }
                  },
                  order_token: order.guest_token
+        order.line_items.reload
+        expect(order.line_items.count).to eql 2
+        expect(order.line_items.second.add_ons.first.id).to eql add_on_one.id
         expect(response.status).to eq(201)
       end
 
@@ -53,6 +56,7 @@ module Spree
                      }
                  },
                  order_token: order.guest_token
+        order.line_items.reload
         expect(response.status).to eq(422)
       end
     end
@@ -103,7 +107,7 @@ module Spree
                        }
                    }
 
-        expect(line_item.add_ons).to eq [add_on_one]
+        expect(line_item.reload.add_ons).to eq [add_on_one]
         expect(response.status).to eq(200)
       end
 

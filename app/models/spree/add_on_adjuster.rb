@@ -23,7 +23,7 @@ module Spree
                                      amount: amount,
                                      eligible: true,
                                      order_id: item.order_id,
-                                     label: name_with_amount(amount),
+                                     label: name,
                                      included: false
                                  })
     end

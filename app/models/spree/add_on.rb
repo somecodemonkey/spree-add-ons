@@ -1,11 +1,3 @@
-=begin
-Current Plan:
-AddOn options will inherit this class and structured via STI
-Eg. Spree::Bag < Spree::AddOn
-
-Where variations between bags will be defined via SKU
-Eg. Spree::Bag = <pref: {color: black}, SKU:'ABC-123'>
-=end
 class Spree::AddOn < Spree::Base
   acts_as_paranoid
 
@@ -16,11 +8,14 @@ class Spree::AddOn < Spree::Base
 
   has_many :images, -> { order(:position) }, as: :viewable, dependent: :destroy, class_name: "Spree::Image"
   has_many :adjustments, as: :source
+  has_many :line_items, through: :adjustments, as: :source
   has_and_belongs_to_many :products
 
   delegate :adjust, :compute_amount, to: :adjuster
 
   after_save :touch_products
+
+  scope :active, -> { where(active: true) }
 
   def adjuster
     @adjuster ||= Spree::AddOnAdjuster.new(self)

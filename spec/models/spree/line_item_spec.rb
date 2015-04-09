@@ -30,7 +30,8 @@ describe Spree::LineItem do
     it "correctly updates the price" do
       line_item.quantity = 3
       line_item.add_ons = product.add_ons
-      expect(line_item.discounted_amount).to eql 90.00
+      line_item.save!
+      expect(line_item.reload.discounted_amount).to eql 90.00
     end
 
     it "retrieves the add ons" do
@@ -45,6 +46,23 @@ describe Spree::LineItem do
       expect(line_item.adjustments.count).to eq 2
       expect(line_item.add_ons.map(&:id) - product.add_ons.map(&:id)).to be_empty
     end
+  end
+
+  describe "when add on is deleted" do
+    before do
+      line_item.add_ons = product.add_ons
+    end
+
+    it "should preseve the association" do
+      product.add_ons.first.destroy
+      expect(line_item.add_ons).to eq product.add_ons
+    end
+
+    it "should mark the line_itam invalid" do
+      product.add_ons.first.destroy
+      expect(line_item.reload.invalid?).to be true
+    end
+
   end
 
 end

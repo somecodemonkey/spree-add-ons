@@ -38,11 +38,16 @@
         <td class="align-center"><%= add_on.class.display_name %></td>
         <td class="align-center"><%= add_on.active %></td>
         <td class="actions" data-hook="admin_products_index_row_actions">
-          <a class="edit fa fa-edit icon_link with-tip no-text" data-action="edit" href=""></a>
-          <a class="delete-resource fa fa-trash icon_link with-tip no-text" data-action="remove" data-confirm="Are you sure?" href=""></a>
+          <%= link_to_edit add_on, :no_text => true %>
+          <%= link_to_delete add_on, :no_text => true %>
         </td>
       </tr>
       <% end %>
       </tbody>
     </table>
+<% else %>
+    <div class="alpha twelve columns no-objects-found">
+      <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/add_on')) %>,
+      <%= link_to Spree.t(:add_one), spree.new_admin_add_on_path %>!
+    </div>
 <% end %>

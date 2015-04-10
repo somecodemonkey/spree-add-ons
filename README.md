@@ -46,6 +46,7 @@ To create a new add on simply create a file simply inherit from ```Spree::AddOn`
 <pre>
 ```
     class Spree::OtherAddOn < Spree::AddOn
+        # what is shown when selecting the type in admin
         def self.display_name
             'Other Add On'
         end

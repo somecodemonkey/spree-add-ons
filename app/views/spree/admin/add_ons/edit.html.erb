@@ -11,7 +11,7 @@
 
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @add_on } %>
 
-<%= form_for [:admin, @add_on.becomes(Spree::AddOn)] do |f| %>
+<%= form_for [:admin, @add_on.becomes(Spree::AddOn)], :html => { :multipart => true }  do |f| %>
     <% f.object = @add_on.becomes(@add_on.class) %>
     <fieldset class="no-border-top">
       <%= render :partial => 'form', :locals => { :f => f } %>

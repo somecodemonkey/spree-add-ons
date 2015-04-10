@@ -7,6 +7,5 @@ module Spree
       attributes :id, :name, :type, :sku, :active, :price, :description
 
     end
-
   end
 end

@@ -7,7 +7,6 @@ A line item can have any number of add ons as long as they are defined on the pr
  and appropriate errors are applied.
 
 To create a line item or update one with add ons POST/PATCH with options as follows:
-<pre>
 ```
 {
     line_item: {
@@ -18,9 +17,7 @@ To create a line item or update one with add ons POST/PATCH with options as foll
     }
 }
 ```
-</pre>
 To remove all add ons or a specific one DELETE with options to /api/orders/:number/line_item/:line_item_id/remove_add_ons
-<pre>
 ```
 {
     line_item: {
@@ -31,9 +28,7 @@ To remove all add ons or a specific one DELETE with options to /api/orders/:numb
     }
 }
 ```
-</pre>
-<br>or omit options to remove all add ons<br>
-<pre>
+or omit options to remove all add ons
 ```
 {
     line_item: {
@@ -41,9 +36,7 @@ To remove all add ons or a specific one DELETE with options to /api/orders/:numb
     }
 }
 ```
-</pre>
-To create a new add on simply create a file simply inherit from ```Spree::AddOn```
-<pre>
+To create a new add on simply inherit from ```Spree::AddOn```
 ```
     class Spree::OtherAddOn < Spree::AddOn
         # what is shown when selecting the type in admin
@@ -52,12 +45,9 @@ To create a new add on simply create a file simply inherit from ```Spree::AddOn`
         end
     end
 ```
-</pre>
-
 This ```Spree::OtherAddOn``` will then be available in /admin when creating a new add_on.
 
 ```Spree::LineItem``` json has been extended to include
-<pre>
 ```
 // add_ons currently attached to the line_item
 add_ons: [
@@ -81,7 +71,6 @@ available_add_ons: [
     }
 ]
 ```
-</pre>
 
 Installation
 ------------

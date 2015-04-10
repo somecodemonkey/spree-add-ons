@@ -22,26 +22,32 @@
         <col style="width: 17%;">
       </colgroup>
       <thead>
-        <tr data-hook="admin_add_ons_index_headers">
-            <th>SKU</th>
-            <th colspan="2">Name</th>
-            <th>Type</th>
-            <th>Active</th>
-        </tr>
+      <tr data-hook="admin_add_ons_index_headers">
+        <th>SKU</th>
+        <th colspan="2">Name</th>
+        <th>Type</th>
+        <th>Active</th>
+      </tr>
       </thead>
       <tbody>
       <% @add_ons.each do |add_on| %>
-      <tr id="add_on_<%= add_on.id%>">
-        <td class="align-center"><%= add_on.sku %></td>
-        <td class="align-center">Img</td>
-        <td><%= add_on.name %></td>
-        <td class="align-center"><%= add_on.class.display_name %></td>
-        <td class="align-center"><%= add_on.active %></td>
-        <td class="actions" data-hook="admin_products_index_row_actions">
-          <%= link_to_edit add_on, :no_text => true %>
-          <%= link_to_delete add_on, :no_text => true %>
-        </td>
-      </tr>
+          <tr id="add_on_<%= add_on.id %>">
+            <td class="align-center"><%= add_on.sku %></td>
+            <td class="align-center">
+              <% if add_on.image.present? %>
+                  <%= image_tag add_on.image.attachment.url(:small) %>
+              <% else %>
+                  No Image
+              <% end %>
+            </td>
+            <td><%= add_on.name %></td>
+            <td class="align-center"><%= add_on.class.display_name %></td>
+            <td class="align-center"><%= add_on.active %></td>
+            <td class="actions" data-hook="admin_products_index_row_actions">
+              <%= link_to_edit add_on, :no_text => true %>
+              <%= link_to_delete add_on, :no_text => true %>
+            </td>
+          </tr>
       <% end %>
       </tbody>
     </table>

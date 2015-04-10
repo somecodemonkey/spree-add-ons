@@ -11,6 +11,7 @@ module Spree
 
     def add_ons
       # Come on rails get your shit together
+      # Cannot unscope default for soft deletes
       # https://github.com/rails/rails/issues/10643
       Spree::AddOn.with_deleted.joins(:adjustments).where("source_id = spree_add_ons.id AND adjustable_id = ?", id)
     end

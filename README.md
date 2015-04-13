@@ -46,7 +46,7 @@ To create a new add on simply inherit from ```Spree::AddOn```
         end
     end
 ```
-This ```Spree::OtherAddOn``` will then be available in /admin when creating a new add_on.
+This ```Spree::OtherAddOn``` will then be available in /admin/add_ons when creating a new add_on.
 
 ```Spree::LineItem``` json has been extended to include
 ```

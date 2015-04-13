@@ -24,6 +24,7 @@ To remove all add ons or a specific one DELETE with options to /api/orders/:numb
     ...
     options: {
             add_on_ids: [1] // Removes add on 1
+            // alternatively you could update with a stringified array
         }
     }
 }
@@ -105,4 +106,4 @@ Simply add this require statement to your spec_helper:
 require 'spree_add_ons/factories'
 ```
 
-Copyright (c) 2015 [name of extension creator], released under the New BSD License
+Copyright (c) 2015 Darby Perez, released under the New BSD License

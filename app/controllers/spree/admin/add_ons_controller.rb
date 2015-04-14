@@ -13,7 +13,9 @@ module Spree
 
       def load_data
         @calculators = Rails.application.config.spree.calculators.add_ons
-        @image = @add_on.image || Spree::Image.new
+        if @add_on.present?
+          @image = @add_on.image || Spree::Image.new
+        end
       end
     end
   end

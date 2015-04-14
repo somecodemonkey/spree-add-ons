@@ -8,7 +8,6 @@ class Spree::AddOn < Spree::Base
   validates :name, presence: true
   validates :sku, presence: true, uniqueness: true
   validates :active, presence: true
-  validates :price, presence: true, numericality: { greater_than_or_equal_to: 0 }
 
   has_one :image, as: :viewable, dependent: :destroy, class_name: "Spree::Image"
   has_many :adjustments, as: :source

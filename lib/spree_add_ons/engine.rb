@@ -9,6 +9,11 @@ module SpreeAddOns
       g.test_framework :rspec
     end
 
+    initializer "spree.add_on.environment" do |app|
+      app.config.spree.calculators.add_class('add_ons')
+      app.config.spree.calculators.add_ons << Spree::Calculator::FlatRate
+    end
+
     def self.activate
       Dir.glob(File.join(File.dirname(__FILE__), '../../app/**/*_decorator*.rb')) do |c|
         Rails.configuration.cache_classes ? require(c) : load(c)

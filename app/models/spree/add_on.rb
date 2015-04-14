@@ -1,5 +1,9 @@
 class Spree::AddOn < Spree::Base
   acts_as_paranoid
+  include Spree::CalculatedAdjustments
+
+  # this will be useful in spree 3
+  # include Spree::AdjustmentSource
 
   validates :name, presence: true
   validates :sku, presence: true, uniqueness: true
@@ -7,7 +11,6 @@ class Spree::AddOn < Spree::Base
   validates :price, presence: true, numericality: { greater_than_or_equal_to: 0 }
 
   has_one :image, as: :viewable, dependent: :destroy, class_name: "Spree::Image"
-  # has_many :images, -> { order(:position) },  source: :images, as: :viewable, dependent: :destroy, class_name: "Spree::Image"
   has_many :adjustments, as: :source
   has_many :line_items, through: :adjustments, as: :source
   has_and_belongs_to_many :products
@@ -34,5 +37,4 @@ class Spree::AddOn < Spree::Base
   def touch_products
     products.each(&:touch)
   end
-
 end

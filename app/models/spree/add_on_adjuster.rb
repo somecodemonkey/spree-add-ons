@@ -1,7 +1,7 @@
 module Spree
   class AddOnAdjuster
     attr_reader :add_on
-    delegate :price, :name, :active, to: :add_on
+    delegate :price, :name, :active, :calculator, to: :add_on
 
     def initialize(add_on)
       @add_on = add_on
@@ -29,7 +29,7 @@ module Spree
     end
 
     def compute_amount(item)
-      price * item.quantity
+      calculator.compute(item)
     end
 
     def name_with_amount(amount = price)

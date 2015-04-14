@@ -1,7 +1,7 @@
 module Spree
   module Admin
     class AddOnsController < Spree::Admin::ResourceController
-      before_action :load_data, only: [:edit]
+      before_action :load_data, only: [:new, :edit]
 
       def location_after_save
         edit_object_url(@add_on)

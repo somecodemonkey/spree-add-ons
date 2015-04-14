@@ -31,7 +31,7 @@ describe Spree::LineItem do
       line_item.quantity = 3
       line_item.add_ons = product.add_ons
       line_item.save!
-      expect(line_item.reload.discounted_amount).to eql 90.00
+      expect(line_item.reload.discounted_amount).to eql 50.00
     end
 
     it "retrieves the add ons" do

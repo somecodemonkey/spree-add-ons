@@ -14,8 +14,8 @@ module Spree
 
       it "should update the totals" do
         subject.update
-        expect(line_item.add_on_total).to eql 3.50
-        expect(line_item.adjustment_total).to eql 3.50
+        expect(line_item.add_on_total).to eql 10
+        expect(line_item.adjustment_total).to eql 10
       end
     end
   end

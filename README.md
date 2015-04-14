@@ -1,7 +1,8 @@
 SpreeAddOns
 ===========
 
-This gem provides the ability to create custom addons for line_items. For example a product can have gift wrapping and/or packaging.
+This gem provides the ability to create custom addons for line_items. For example a product can have gift wrapping and/or packaging. A ```Spree::AddOn```
+has one ```Spree::Calculator```. Options for calculators can be added via ```app.config.spree.calculators.add_ons << Spree::Calculator::FlatRate```.
 
 A line item can have any number of add ons as long as they are defined on the product and active. In the event an add on is deleted the line_item and order are marked invalid
  and appropriate errors are applied.

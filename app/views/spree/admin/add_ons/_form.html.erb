@@ -26,13 +26,24 @@
           <%= f.label :type, Spree.t(:type) %>
           <%= f.select :type, options_for_select(Spree::AddOn.subclasses.collect { |klass| [klass.display_name, klass.name] }), {}, :class => 'select2 fullwidth' %>
       <% end %>
+
+      <% field_name = "[add_on][calculator_type]" %>
+      <%= label_tag field_name, Spree.t(:calculator) %>
+      <%= select_tag field_name, options_from_collection_for_select(@calculators, :to_s, :description), :class => 'type-select select2 fullwidth' %>
     </div>
-    <div class="two columns omega">
-      <%= f.field_container :price do %>
-          <%= f.label :price, "Price" %><br>
-          <%= f.number_field :price, min: 0, step: 0.01, class: "fullwidth" %>
-      <% end %>
-    </div>
+
+    <% if @add_on.calculator.present? %>
+        <div class="add-on-calculator field omega four columns">
+          <% param_prefix = "add_on" %>
+          <% type_name = @add_on.calculator.type.demodulize.underscore %>
+          <% if lookup_context.exists?("fields", ["spree/admin/promotions/calculators/#{type_name}"], true) %>
+              <%= render "spree/admin/promotions/calculators/#{type_name}/fields", calculator: @add_on.calculator, prefix: param_prefix %>
+          <% else %>
+              <%= render "spree/admin/promotions/calculators/default_fields",  calculator: @add_on.calculator, prefix: param_prefix %>
+          <% end %>
+          <%= hidden_field_tag "#{param_prefix}[calculator_attributes][id]", @add_on.calculator.id %>
+        </div>
+    <% end %>
   </div>
 
   <div class="row">
@@ -43,13 +54,13 @@
       <% end %>
     </div>
   </div>
-  <%= f.fields_for :image, Spree::Image.new do |img| %>
+  <%= f.fields_for :image, @image do |img| %>
       <div class="row">
         <div class="four columns omega">
-          <% if @add_on.image.present? %>
+          <% unless @image.new_record? %>
               <div data-hook="thumbnail" class="field alpha three columns align-center">
                 <%= f.label Spree.t(:thumbnail) %><br>
-                <%= image_tag @add_on.image.attachment.url(:small) %>
+                <%= image_tag @image.attachment.url(:small) %>
               </div>
           <% end %>
         </div>

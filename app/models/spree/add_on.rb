@@ -2,8 +2,8 @@ class Spree::AddOn < Spree::Base
   acts_as_paranoid
   include Spree::CalculatedAdjustments
 
-  # this will be useful in spree 3
-  # include Spree::AdjustmentSource
+  # this will be *more* useful in spree 3
+  include Spree::AdjustmentSource
 
   validates :name, presence: true
   validates :sku, presence: true, uniqueness: true

@@ -29,12 +29,15 @@ describe Spree::AddOn do
       let (:option) { create(:add_on, master: add_on, is_master: false)}
 
       it "should return self if master" do
-        puts add_on.master.inspect
         expect(add_on.master).to eq(add_on)
       end
 
       it "should return master" do
         expect(option.master).to eq(add_on)
+      end
+
+      it "should return masters option" do
+        expect(add_on.options.first).to eq(option)
       end
     end
   end

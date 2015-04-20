@@ -17,7 +17,7 @@ describe Spree::LineItem do
 
   context "no current addons" do
     it "should 'create' the add on adjustments" do
-      # TODO more robust test
+      puts line_item.add_ons.to_sql.inspect
       line_item.add_ons = product.add_ons
       expect(line_item.adjustments.add_ons.count).to eql 2
     end
@@ -36,15 +36,17 @@ describe Spree::LineItem do
 
     it "retrieves the add ons" do
       line_item.add_ons = product.add_ons
-      expect(line_item.add_ons.map(&:id) - product.add_ons.map(&:id)).to be_empty
+      li_add_ons = line_item.add_ons.map{|add| add.master}
+      expect(li_add_ons.map(&:id) - product.add_ons.map(&:id)).to be_empty
     end
   end
 
   context "with current addons" do
     it "does not duplicate adjusmtents" do
       line_item.add_ons = [product.add_ons, product.add_ons]
+      li_add_ons = line_item.add_ons.map{|add| add.master}
       expect(line_item.adjustments.count).to eq 2
-      expect(line_item.add_ons.map(&:id) - product.add_ons.map(&:id)).to be_empty
+      expect(li_add_ons.map(&:id) - product.add_ons.map(&:id)).to be_empty
     end
   end
 
@@ -55,7 +57,9 @@ describe Spree::LineItem do
 
     it "should preseve the association" do
       product.add_ons.first.destroy
-      expect(line_item.add_ons).to eq product.add_ons
+      li_add_ons = line_item.add_ons
+      expect(li_add_ons.any?{|add| add.is_master?}).to be false
+      expect(li_add_ons.map{|add| add.master}).to eq product.add_ons
     end
 
     it "should mark the line_itam invalid" do

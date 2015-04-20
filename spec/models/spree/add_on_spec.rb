@@ -18,21 +18,29 @@ describe Spree::AddOn do
       FactoryGirl.build(:add_on, active: nil).should_not be_valid
     end
 
-    it "requires price" do
-      FactoryGirl.build(:add_on, price: nil).should_not be_valid
-    end
 
     it "requires sku" do
       FactoryGirl.build(:add_on, sku: nil).should_not be_valid
     end
 
     describe "STI" do
-      describe "#create" do
-        it "should work" do
-          expect{ Spree::Bag.create(name: "This is a bag yo!", price: 3.50, sku: "YO-BAG") }.to_not raise_error
-        end
+      # describe "#create" do
+      #   it "should work" do
+      #     expect{ Spree::Bag.create(name: "This is a bag yo!", price: 3.50, sku: "YO-BAG") }.to_not raise_error
+      #   end
+      # end
+
+      let (:add_on) { create(:add_on) }
+      let (:option) { create(:add_on, master: add_on, is_master: false)}
+
+      it "should return self if master" do
+        puts add_on.master.inspect
+        expect(add_on.master).to eq(add_on)
       end
 
+      it "should return master" do
+        expect(option.master).to eq(add_on)
+      end
     end
   end
 

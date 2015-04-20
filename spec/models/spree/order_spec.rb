@@ -10,7 +10,6 @@ describe Spree::Order, :type => :model do
   let!(:product_two) { create(:product, add_ons: [bag]) }
 
   let!(:line_item) { create(:line_item, variant: create(:variant, product: product)) }
-  # let!(:line_item_two) { create(:line_item, variant: create(:variant)) }
   let!(:order) { create(:order, line_items: [line_item]) }
 
   before do
@@ -24,7 +23,7 @@ describe Spree::Order, :type => :model do
     end
 
     it "matches to the correct line item with add ones" do
-      options = {add_on_ids: product.add_ons.map(&:id)}
+      options = {add_on_ids: line_item.add_ons.map(&:id)}
       expect(order.add_on_matcher(order.line_items.first, options)).to be true
     end
 

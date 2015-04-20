@@ -1,7 +1,7 @@
 module Spree
   class AddOnAdjuster
     attr_reader :add_on
-    delegate :price, :name, :active, :calculator, to: :add_on
+    delegate :master, :calculator, to: :add_on
 
     def initialize(add_on)
       @add_on = add_on
@@ -17,18 +17,23 @@ module Spree
 
     def create_adjustment(item)
       amount = compute_amount(item)
-      add_on.adjustments.create!({
-                                     adjustable: item,
-                                     amount: amount,
-                                     eligible: true,
-                                     order_id: item.order_id,
-                                     label: name,
-                                     included: false
-                                 })
+      option = master.options.create!({
+                                          master: master,
+                                          name: master.name
+                                      })
+      Spree::Adjustment.create!({
+                                    source: option,
+                                    adjustable: item,
+                                    amount: amount,
+                                    eligible: true,
+                                    order_id: item.order_id,
+                                    label: master.name,
+                                    included: false
+                                })
     end
 
     def compute_amount(item)
-      calculator.compute(item)
+      master.calculator.compute(item)
     end
 
     def name_with_amount(amount = price)
@@ -38,11 +43,12 @@ module Spree
     private
 
     def adjustment_for(item)
-      add_on.adjustments.where(adjustable_id: item.id).first
+      add_ons = item.add_ons.where(master: master).first
+      add_ons.adjustment if add_ons.present?
     end
 
     def can_do?(item)
-      active && compute_amount(item) > 0
+      master.active && compute_amount(item) > 0
     end
   end
 end

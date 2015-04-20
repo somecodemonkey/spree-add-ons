@@ -13,13 +13,13 @@ module Spree
       # Come on rails get your shit together
       # Cannot unscope default for soft deletes
       # https://github.com/rails/rails/issues/10643
-      Spree::AddOn.with_deleted.joins(:adjustments).where("source_id = spree_add_ons.id AND adjustable_id = ?", id)
+      Spree::AddOn.with_deleted.joins(:adjustment).where("source_id = spree_add_ons.id AND adjustable_id = ?", id)
     end
 
     def add_ons=(*new_add_ons)
-      adjustments.add_ons.destroy_all
+      self.adjustments.add_ons.destroy_all
       new_add_ons.flatten!.each do |add_on|
-        add_on.adjust(self)
+        add_on.master.adjust(self)
       end
     end
 
@@ -47,7 +47,7 @@ module Spree
     end
 
     def ensure_valid_add_ons(proposed = add_ons)
-      invalid_add_ons = proposed - product.add_ons
+      invalid_add_ons = proposed.map(&:master) - product.add_ons
       unless proposed.empty? || invalid_add_ons.empty?
         invalid_message = invalid_add_ons.map { |add| add.name }.join(", ") + (invalid_add_ons.length > 1 ? " are" : " is")
         errors[:base] << "#{invalid_message} not a valid add on for #{product.name}"

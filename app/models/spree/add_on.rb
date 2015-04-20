@@ -37,7 +37,7 @@ class Spree::AddOn < Spree::Base
   end
 
   def attach_add_on(line_item, add_on = nil)
-    new_add_on = create_option(add_on.try(:preferences))
+    new_add_on = create_option(add_on.try(:preferences) || {})
     adjustment = adjuster.adjust(line_item)
     adjustment.source = new_add_on
     adjustment.save!
@@ -47,7 +47,7 @@ class Spree::AddOn < Spree::Base
     master.options.create!({
                                master: master,
                                name: master.name,
-                               preferences: preferences || {}
+                               preferences: preferences
                            })
   end
 

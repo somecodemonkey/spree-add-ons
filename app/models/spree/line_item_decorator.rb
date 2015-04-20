@@ -17,10 +17,14 @@ module Spree
     end
 
     def add_ons=(*new_add_ons)
-      self.adjustments.add_ons.destroy_all
+      adjustments.add_ons.destroy_all
       new_add_ons.flatten!.each do |add_on|
-        add_on.master.adjust(self)
+        add_on.master.attach_add_on(self)
       end
+
+      # TODO find away so that this is called implicitly
+      update_tax_charge
+      recalculate_adjustments
     end
 
     def available_add_ons

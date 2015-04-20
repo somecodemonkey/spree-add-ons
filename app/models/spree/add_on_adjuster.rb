@@ -17,12 +17,7 @@ module Spree
 
     def create_adjustment(item)
       amount = compute_amount(item)
-      option = master.options.create!({
-                                          master: master,
-                                          name: master.name
-                                      })
       Spree::Adjustment.create!({
-                                    source: option,
                                     adjustable: item,
                                     amount: amount,
                                     eligible: true,
@@ -43,8 +38,8 @@ module Spree
     private
 
     def adjustment_for(item)
-      add_ons = item.add_ons.where(master: master).first
-      add_ons.adjustment if add_ons.present?
+      add_on = item.add_ons.where(master: master).first
+      add_on.adjustment if add_on.present?
     end
 
     def can_do?(item)

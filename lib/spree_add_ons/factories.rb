@@ -14,6 +14,7 @@ FactoryGirl.define do
     sku "TB-OOPS"
     is_master true
     calculator
+    after(:create) { |add| add.calculator.set_preference(:amount, 15.0) }
   end
 
   factory :other_other_add_on, class: Spree::OtherAddOn do
@@ -22,5 +23,6 @@ FactoryGirl.define do
     sku "WRAP-123"
     is_master true
     calculator
+    after(:create) { |add| add.calculator.set_preference(:amount, 20.0) }
   end
 end

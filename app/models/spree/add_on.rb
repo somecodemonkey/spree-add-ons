@@ -13,7 +13,7 @@ class Spree::AddOn < Spree::Base
   scope :master, -> { where(is_master: true, master_id: nil)}
 
   # has_one :line_item, through: :adjustment, as: :source
-  has_one :adjustment, as: :source
+  has_one :adjustment, as: :source, dependent: :destroy
   has_one :image, as: :viewable, dependent: :destroy, class_name: "Spree::Image"
   belongs_to :master, class_name: "Spree::AddOn"
   has_many :options, class_name: "Spree::AddOn", foreign_key: "master_id"
@@ -31,8 +31,24 @@ class Spree::AddOn < Spree::Base
     if is_master?
       self
     else
+      # unscope for relations
       Spree::AddOn.unscoped { super }
     end
+  end
+
+  def attach_add_on(line_item, add_on = nil)
+    new_add_on = create_option(add_on.try(:preferences))
+    adjustment = adjuster.adjust(line_item)
+    adjustment.source = new_add_on
+    adjustment.save!
+  end
+
+  def create_option(preferences)
+    master.options.create!({
+                               master: master,
+                               name: master.name,
+                               preferences: preferences || {}
+                           })
   end
 
   # override this

@@ -13,17 +13,17 @@ describe Spree::AddOnAdjuster do
     it "should create the adjustments" do
       allow(adjuster).to receive(:is_new?).and_return(true)
       adjuster.adjust(line_item)
-      expect(line_item.adjustments.add_ons.count).to eql 1
-      expect(line_item.add_ons.first.master_id).to eql master_add_on.id
+      # source type not set in adjuster
+      expect(line_item.adjustments.count).to eql 1
       expect(master_add_on.adjustment).to be nil
     end
 
     it "will not duplicate adjustments" do
       allow(adjuster).to receive(:is_new?).and_return(true)
+      adj = adjuster.adjust(line_item)
+      allow(adjuster).to receive(:adjustment_for).and_return(adj)
       adjuster.adjust(line_item)
-      adjuster.adjust(line_item)
-      expect(line_item.adjustments.add_ons.count).to eql 1
-      expect(line_item.add_ons.first.master_id).to eql master_add_on.id
+      expect(line_item.adjustments.count).to eql 1
       expect(master_add_on.adjustment).to be nil
     end
 

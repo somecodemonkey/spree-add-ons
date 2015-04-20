@@ -17,7 +17,6 @@ describe Spree::LineItem do
 
   context "no current addons" do
     it "should 'create' the add on adjustments" do
-      puts line_item.add_ons.to_sql.inspect
       line_item.add_ons = product.add_ons
       expect(line_item.adjustments.add_ons.count).to eql 2
     end

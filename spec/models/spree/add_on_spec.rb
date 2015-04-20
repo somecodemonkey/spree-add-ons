@@ -23,12 +23,7 @@ describe Spree::AddOn do
       FactoryGirl.build(:add_on, sku: nil).should_not be_valid
     end
 
-    describe "STI" do
-      # describe "#create" do
-      #   it "should work" do
-      #     expect{ Spree::Bag.create(name: "This is a bag yo!", price: 3.50, sku: "YO-BAG") }.to_not raise_error
-      #   end
-      # end
+    describe "self relation" do
 
       let (:add_on) { create(:add_on) }
       let (:option) { create(:add_on, master: add_on, is_master: false)}

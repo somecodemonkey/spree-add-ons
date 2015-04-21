@@ -26,7 +26,7 @@ describe Spree::AddOn do
     describe "self relation" do
 
       let (:add_on) { create(:add_on) }
-      let (:option) { create(:add_on, master: add_on, is_master: false)}
+      let! (:option) { create(:add_on, master: add_on, is_master: false)}
 
       it "should return self if master" do
         expect(add_on.master).to eq(add_on)
@@ -48,6 +48,12 @@ describe Spree::AddOn do
     it { expect(add_on).to callback(:touch_products).after(:save) }
   end
 
+  describe "destroy" do
+    let(:add_on) { create(:add_on) }
+    let(:line_item) { create(:line_item) }
+    let(:adjustment) { create(:adjustment, source: add_on, adjustable: line_item)}
+  end
+
   describe "#images" do
     let(:add_on) { create(:add_on) }
     let(:image) { File.open(File.expand_path('../../../fixtures/nacho_taco.png', __FILE__)) }
@@ -55,7 +61,7 @@ describe Spree::AddOn do
 
     it "only have an image" do
       img = Spree::Image.create(params)
-      expect(add_on.image).to eql img
+      expect(add_on.images.first).to eql img
     end
   end
 

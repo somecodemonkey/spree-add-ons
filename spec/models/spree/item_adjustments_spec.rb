@@ -10,6 +10,7 @@ module Spree
 
       before do
         line_item.add_ons = [add_on]
+        line_item.save!
       end
 
       it "should update the totals" do

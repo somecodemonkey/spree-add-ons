@@ -39,12 +39,20 @@
           <% if lookup_context.exists?("fields", ["spree/admin/promotions/calculators/#{type_name}"], true) %>
               <%= render "spree/admin/promotions/calculators/#{type_name}/fields", calculator: @add_on.calculator, prefix: param_prefix %>
           <% else %>
-              <%= render "spree/admin/promotions/calculators/default_fields",  calculator: @add_on.calculator, prefix: param_prefix %>
+              <%= render "spree/admin/promotions/calculators/default_fields", calculator: @add_on.calculator, prefix: param_prefix %>
           <% end %>
           <%= hidden_field_tag "#{param_prefix}[calculator_attributes][id]", @add_on.calculator.id %>
         </div>
     <% end %>
   </div>
+
+  <!--<div class="row">-->
+    <!--<div class="four columns omega">-->
+      <!--<% f.field_container :preferences do %>-->
+          <!--<% preference_fields(@add_on, f) %>-->
+      <!--<% end %>-->
+    <!--</div>-->
+  <!--</div>-->
 
   <div class="row">
     <div class="eight columns omega">
@@ -54,7 +62,7 @@
       <% end %>
     </div>
   </div>
-  <%= f.fields_for :image, @image do |img| %>
+  <%= f.fields_for :images, @image do |img| %>
       <div class="row">
         <div class="four columns omega">
           <% unless @image.new_record? %>

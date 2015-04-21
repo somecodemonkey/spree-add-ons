@@ -8,7 +8,7 @@ FactoryGirl.define do
     calculator
   end
 
-  factory :other_add_on, class: Spree::OtherAddOn do
+  factory :other_add_on, class: Spree::AddOn do
     name "Truffle Butter"
     description "Truffle...butter"
     sku "TB-OOPS"
@@ -17,7 +17,7 @@ FactoryGirl.define do
     after(:create) { |add| add.calculator.set_preference(:amount, 15.0) }
   end
 
-  factory :other_other_add_on, class: Spree::OtherAddOn do
+  factory :other_other_add_on, class: Spree::AddOn do
     name "gift wrapping"
     description "wrap that shiz"
     sku "WRAP-123"

@@ -19,11 +19,12 @@ describe Spree::Order, :type => :model do
   describe "add_on match" do
     before do
       line_item.add_ons = product.add_ons
+      line_item.save!
       order.line_items.first.reload
     end
 
     it "matches to the correct line item with add ones" do
-      options = {add_on_ids: line_item.add_ons.map(&:id)}
+      options = {add_ons: line_item.add_ons.map { |add| {id: add.id} }}
       expect(order.add_on_matcher(order.line_items.first, options)).to be true
     end
 
@@ -32,17 +33,17 @@ describe Spree::Order, :type => :model do
     end
 
     it "returns false with empty add ons" do
-      options = {add_on_ids: []}
+      options = {add_ons: []}
       expect(order.add_on_matcher(order.line_items.first, options)).to be false
     end
 
     it "returns false with different add ons" do
-      options = {add_on_ids: product_two.add_ons.map(&:id)}
+      options = {add_ons: product_two.add_ons.map { |add| {id: add.id} }}
       expect(order.add_on_matcher(order.line_items.first, options)).to be false
     end
 
     it "returns false with no product add ons" do
-      options = {add_on_ids: product_two.add_ons.map(&:id)}
+      options = {add_ons: product_two.add_ons.map { |add| {id: add.id} }}
       expect(order.add_on_matcher(order.line_items.first, options)).to be false
     end
   end
@@ -50,6 +51,7 @@ describe Spree::Order, :type => :model do
   describe "when add on is deleted" do
     before do
       order.line_items.first.add_ons = product.add_ons
+      line_item.save!
       order.line_items.first.reload
     end
 

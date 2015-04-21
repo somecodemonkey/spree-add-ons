@@ -2,12 +2,13 @@ require 'spec_helper'
 
 describe Spree::LineItem do
 
-  let(:product) { create(:product, add_ons: [create(:add_on), create(:add_on, sku: 'DEF-123')]) }
+  let(:product) { create(:product, add_ons: [create(:add_on), create(:other_other_add_on)]) }
   let(:line_item) { create(:line_item, variant: create(:variant, product: product)) }
   let(:other_add_on) { create(:other_add_on) }
 
   context "callbacks" do
     it { expect(line_item).to callback(:persist_add_on_total).after(:save) }
+    it { expect(line_item).to callback(:attach_add_ons).after(:save) }
   end
 
   it "only allows valid add ons" do
@@ -18,11 +19,13 @@ describe Spree::LineItem do
   context "no current addons" do
     it "should 'create' the add on adjustments" do
       line_item.add_ons = product.add_ons
+      line_item.save!
       expect(line_item.adjustments.add_ons.count).to eql 2
     end
 
     it "calculates the discounted amount" do
       line_item.add_ons = product.add_ons
+      line_item.save!
       expect(line_item.discounted_amount).to eql 30.00
     end
 
@@ -35,6 +38,7 @@ describe Spree::LineItem do
 
     it "retrieves the add ons" do
       line_item.add_ons = product.add_ons
+      line_item.save!
       li_add_ons = line_item.add_ons.map{|add| add.master}
       expect(li_add_ons.map(&:id) - product.add_ons.map(&:id)).to be_empty
     end
@@ -43,8 +47,9 @@ describe Spree::LineItem do
   context "with current addons" do
     it "does not duplicate adjusmtents" do
       line_item.add_ons = [product.add_ons, product.add_ons]
+      line_item.save!
       li_add_ons = line_item.add_ons.map{|add| add.master}
-      expect(line_item.adjustments.count).to eq 2
+      expect(line_item.reload.adjustments.count).to eq 2
       expect(li_add_ons.map(&:id) - product.add_ons.map(&:id)).to be_empty
     end
   end
@@ -52,6 +57,7 @@ describe Spree::LineItem do
   describe "when add on is deleted" do
     before do
       line_item.add_ons = product.add_ons
+      line_item.save!
     end
 
     it "should preseve the association" do

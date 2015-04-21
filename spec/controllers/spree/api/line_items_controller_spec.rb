@@ -36,13 +36,17 @@ module Spree
                      variant_id: product.master.id,
                      quantity: 1,
                      options: {
-                         add_on_ids: [add_on_one.id]
+                         add_ons: [
+                             {
+                                 id: add_on_one.id
+                             }
+                         ]
                      }
                  },
                  order_token: order.guest_token
         order.line_items.reload
         expect(order.line_items.count).to eql 2
-        expect(order.line_items.second.add_ons.first.id).to eql add_on_one.id
+        expect(order.line_items.second.add_ons.first.master.id).to eql add_on_one.id
         expect(response.status).to eq(201)
       end
 
@@ -52,7 +56,11 @@ module Spree
                      variant_id: product.master.id,
                      quantity: 1,
                      options: {
-                         add_on_ids: [add_on_two.id]
+                         add_ons: [
+                             {
+                                 id: add_on_two.id
+                             }
+                         ]
                      }
                  },
                  order_token: order.guest_token
@@ -68,12 +76,16 @@ module Spree
                 :line_item => {
                     :quantity => 1,
                     :options => {
-                        add_on_ids: [add_on_one.id]
+                        add_ons: [
+                            {
+                                id: add_on_one.id
+                            }
+                        ]
                     }
                 }
         expect(response.status).to eq(200)
         expect(json_response).to have_attributes(attributes)
-        expect(json_response["add_ons"][0]["id"]).to eql add_on_one.id
+        expect(json_response["add_ons"][0]["master_id"]).to eql add_on_one.id
       end
 
       it "with an invalid add_on" do
@@ -82,7 +94,11 @@ module Spree
                 :line_item => {
                     :quantity => 1,
                     :options => {
-                        add_on_ids: [add_on_two.id]
+                        add_ons: [
+                            {
+                                id: add_on_two.id
+                            }
+                        ]
                     }
                 }
         expect(response.status).to eq(422)
@@ -95,39 +111,19 @@ module Spree
       before(:each) do
         product.add_ons = [add_on_one, add_on_two]
         line_item.add_ons = [add_on_one, add_on_two]
+        line_item.save!
       end
 
-      it "removes specific add_ons"do
-        api_delete :remove_add_ons,
-                   :id => line_item.id,
-                   :line_item => {
-                       :quantity => 1,
-                       :options => {
-                           add_on_ids: [add_on_two.id]
-                       }
-                   }
-
-        expect(line_item.reload.add_ons).to eq [add_on_one]
-        expect(response.status).to eq(200)
-      end
-
-      it "removes all add_ons with options"do
-        api_delete :remove_add_ons,
-                   :id => line_item.id,
-                   :line_item => {
-                       :quantity => 1,
-                       :options => {
-                           add_on_ids: [add_on_one.id, add_on_two.id]
-                       }
-                   }
-        expect(line_item.reload.add_ons).to be_empty
-        expect(response.status).to eq(200)
-      end
-
-      it "removes all add_ons with no options"do
-        api_delete :remove_add_ons,
-                   :id => line_item.id
-        expect(line_item.reload.add_ons).to be_empty
+      it "removes add_ons" do
+        api_put :update,
+                :id => line_item.id,
+                :line_item => {
+                    :quantity => 1,
+                    :options => {
+                        add_ons: []
+                    }
+                }
+        expect(line_item.reload.add_ons.empty?).to be true
         expect(response.status).to eq(200)
       end
     end

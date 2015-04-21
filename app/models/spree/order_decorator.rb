@@ -14,10 +14,8 @@ Spree::Order.class_eval do
   def add_on_matcher(line_item, options)
     if line_item.add_ons.present?
       current_add_ons = line_item.add_ons.map(&:id)
-    else
-      current_add_ons = line_item.add_on_ids || []
     end
-    return current_add_ons.present? && options.present? && (current_add_ons - options[:add_on_ids]).empty?
+    return current_add_ons.present? && options.present? && (current_add_ons - options[:add_ons].map{ |add| add[:id] }).empty?
   end
 
   def line_item_add_ons

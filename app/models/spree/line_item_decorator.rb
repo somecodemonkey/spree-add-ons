@@ -2,10 +2,10 @@ module Spree
   LineItem.class_eval do
     validate :ensure_valid_add_ons
 
-    after_save :create_add_ons
+    after_save :attach_add_ons
     after_save :persist_add_on_total
 
-    attr_accessor :add_on_ids
+    attr_accessor :add_ons_to_add
 
     has_many :add_ons, through: :adjustments, source: :source, source_type: "Spree::AddOn"
 
@@ -17,14 +17,9 @@ module Spree
     end
 
     def add_ons=(*new_add_ons)
-      adjustments.add_ons.destroy_all
-      new_add_ons.flatten!.each do |add_on|
-        add_on.master.attach_add_on(self)
-      end
-
-      # TODO find away so that this is called implicitly
-      update_tax_charge
-      recalculate_adjustments
+      add_ons = Spree::AddOn.master.find(new_add_ons.flatten!.map { |add| add[:id] })
+      @add_ons_to_add = add_ons
+      ensure_valid_add_ons
     end
 
     def available_add_ons
@@ -32,27 +27,35 @@ module Spree
     end
 
     def display_add_on_total
-      Spree::Money.new(add_on_total, { currency: currency })
+      Spree::Money.new(add_on_total, {currency: currency})
     end
 
     private
 
-    def create_add_ons
-      if @add_on_ids.present?
-        add_ons = Spree::AddOn.find(@add_on_ids)
-        ensure_valid_add_ons(add_ons)
-        if errors.any?
-          raise ActiveRecord::Rollback
-        else
-          self.add_ons = add_ons
-        end
-        @add_on_ids = nil
+    def attach_add_ons(new_add_ons = @add_ons_to_add)
+      return if @add_ons_to_add.nil?
+
+      if errors.any?
+        raise ActiveRecord::Rollback
       end
+
+      adjustments.add_ons.destroy_all
+
+      new_add_ons.each do |add_on|
+        add_on.master.attach_add_on(self)
+      end
+
+      # TODO find away so that this is called implicitly
+      update_tax_charge
+      recalculate_adjustments
+      @add_ons_to_add = nil
     end
 
-    def ensure_valid_add_ons(proposed = add_ons)
-      invalid_add_ons = proposed.map(&:master) - product.add_ons
-      unless proposed.empty? || invalid_add_ons.empty?
+    def ensure_valid_add_ons
+      current_add_ons = add_ons
+      current_add_ons.concat(add_ons_to_add) unless add_ons_to_add.nil?
+      invalid_add_ons = current_add_ons.map(&:master) - product.add_ons
+      unless current_add_ons.empty? || invalid_add_ons.empty?
         invalid_message = invalid_add_ons.map { |add| add.name }.join(", ") + (invalid_add_ons.length > 1 ? " are" : " is")
         errors[:base] << "#{invalid_message} not a valid add on for #{product.name}"
       end

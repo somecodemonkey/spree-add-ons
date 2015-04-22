@@ -13,9 +13,9 @@ Spree::Order.class_eval do
   # Notes: The only way to distinctly match will be to include ALL the line_items add_ons
   def add_on_matcher(line_item, options)
     if line_item.add_ons.present?
-      current_add_ons = line_item.add_ons.map(&:id)
+      current_add_ons = line_item.add_ons.map(&:master_id)
     end
-    return current_add_ons.present? && options.present? && (current_add_ons - options[:add_ons].map{ |add| add[:id] }).empty?
+    return current_add_ons.present? && options.present? && (current_add_ons - options[:add_ons].map{ |add| add[:master_id] }).empty?
   end
 
   def line_item_add_ons

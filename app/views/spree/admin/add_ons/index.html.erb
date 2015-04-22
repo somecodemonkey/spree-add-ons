@@ -34,8 +34,8 @@
           <tr id="add_on_<%= add_on.id %>">
             <td class="align-center"><%= add_on.sku %></td>
             <td class="align-center">
-              <% if add_on.image.present? %>
-                  <%= image_tag add_on.image.attachment.url(:small) %>
+              <% if add_on.images.present? %>
+                  <%= image_tag add_on.images.fisrt.attachment.url(:small) %>
               <% else %>
                   No Image
               <% end %>

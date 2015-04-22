@@ -22,11 +22,6 @@
 
   <div class="row">
     <div class="four columns omega">
-      <%= f.field_container :type do %>
-          <%= f.label :type, Spree.t(:type) %>
-          <%= f.select :type, options_for_select(Spree::AddOn.subclasses.collect { |klass| [klass.display_name, klass.name] }), {}, :class => 'select2 fullwidth' %>
-      <% end %>
-
       <% field_name = "[add_on][calculator_type]" %>
       <%= label_tag field_name, Spree.t(:calculator) %>
       <%= select_tag field_name, options_from_collection_for_select(@calculators, :to_s, :description), :class => 'type-select select2 fullwidth' %>
@@ -46,13 +41,23 @@
     <% end %>
   </div>
 
-  <!--<div class="row">-->
-    <!--<div class="four columns omega">-->
-      <!--<% f.field_container :preferences do %>-->
-          <!--<% preference_fields(@add_on, f) %>-->
-      <!--<% end %>-->
-    <!--</div>-->
-  <!--</div>-->
+  <div class="row">
+    <div class="eight columns omega">
+      <%= f.field_container :option_types do %>
+          <%= f.label :option_type_ids, Spree.t(:option_types) %>
+          <%= f.hidden_field :option_type_ids, :value => @add_on.option_type_ids.join(','), class: 'fullwidth' %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="eight columns omega">
+      <%= f.field_container :option_inputs do %>
+          <%= preference_fields(@add_on, f) %>
+          <small>Comma separated list of inputs.</small>
+      <% end %>
+    </div>
+  </div>
 
   <div class="row">
     <div class="eight columns omega">
@@ -62,16 +67,21 @@
       <% end %>
     </div>
   </div>
-  <%= f.fields_for :images, @image do |img| %>
-      <div class="row">
-        <div class="four columns omega">
-          <% unless @image.new_record? %>
-              <div data-hook="thumbnail" class="field alpha three columns align-center">
-                <%= f.label Spree.t(:thumbnail) %><br>
-                <%= image_tag @image.attachment.url(:small) %>
-              </div>
-          <% end %>
-        </div>
+
+
+  <div class="row">
+    <%= f.fields_for :images, Spree::Image.new do |img| %>
+        <% unless @images.empty? %>
+            <div class="four columns omega">
+              <% @images.each do |image| %>
+                  <div data-hook="thumbnail" class="field alpha three columns align-center">
+                    <%= f.label Spree.t(:thumbnail) %><br>
+                    <%= image_tag image.attachment.url(:small) %>
+                  </div>
+              <% end %>
+            </div>
+        <% end %>
+
         <div class="eight columns omega">
           <div data-hook="file" class="field">
             <%= img.label :attachment, Spree.t(:filename) %><br>
@@ -79,8 +89,7 @@
             <%= img.hidden_field :viewable_id, :value => @add_on.id %>
           </div>
         </div>
-      </div>
-
-  <% end %>
+    <% end %>
+  </div>
 
 </div>

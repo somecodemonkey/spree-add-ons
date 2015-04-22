@@ -26,7 +26,7 @@ describe Spree::AddOn do
     describe "self relation" do
 
       let (:add_on) { create(:add_on) }
-      let! (:option) { create(:add_on, master: add_on, is_master: false)}
+      let! (:option) { create(:add_on, master: add_on, is_master: false) }
 
       it "should return self if master" do
         expect(add_on.master).to eq(add_on)
@@ -42,6 +42,28 @@ describe Spree::AddOn do
     end
   end
 
+  describe "option" do
+    let(:add_on) { create(:add_on, option_types: [create(:option_type)]) }
+    let(:product) { create(:product, add_ons: [add_on, create(:other_other_add_on)]) }
+    let(:option_value) { create(:option_value) }
+    let(:line_item) { create(:line_item, product: product) }
+
+    it "creates a valid option" do
+      add_on.attach_add_on(line_item)
+      expect(line_item.add_ons.count).to eql 1
+      expect(line_item.add_ons.first.master_id).to eql add_on.id
+      expect(line_item.add_ons.first.is_master).to be false
+    end
+
+    it "creates a valid option with values" do
+      add_on.attach_add_on(line_item, {"foo-size-1" => "Size-1"})
+      expect(line_item.add_ons.count).to eql 1
+      expect(line_item.add_ons.first.master_id).to eql add_on.id
+      expect(line_item.add_ons.first.option_values.count).to eql 1
+      expect(line_item.add_ons.first.option_values.first.name).to eql "Size-1"
+    end
+  end
+
   describe "callbacks" do
     let(:add_on) { create(:add_on) }
 
@@ -51,7 +73,7 @@ describe Spree::AddOn do
   describe "destroy" do
     let(:add_on) { create(:add_on) }
     let(:line_item) { create(:line_item) }
-    let(:adjustment) { create(:adjustment, source: add_on, adjustable: line_item)}
+    let(:adjustment) { create(:adjustment, source: add_on, adjustable: line_item) }
   end
 
   describe "#images" do
@@ -60,8 +82,8 @@ describe Spree::AddOn do
     let(:params) { {:viewable_id => add_on.id, :viewable_type => 'Spree::AddOn', :attachment => image, :alt => "position 2", :position => 2} }
 
     it "only have an image" do
-      img = Spree::Image.create(params)
-      expect(add_on.images.first).to eql img
+      img = Spree::AddOnImage.create!(params)
+      expect(add_on.reload.images.first).to eql img
     end
   end
 

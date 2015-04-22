@@ -3,7 +3,7 @@ module Spree
     LineItemsController.class_eval do
       before_action :set_line_item, only: [:show]
 
-      self.line_item_options << {add_ons: [:id]}
+      self.line_item_options << {add_ons: [:master_id, :options]}
 
       private
 

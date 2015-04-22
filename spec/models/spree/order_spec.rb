@@ -16,15 +16,15 @@ describe Spree::Order, :type => :model do
     allow(Spree::User).to receive_messages(:current => mock_model(Spree::User, :id => 123))
   end
 
-  describe "add_on match" do
+  describe "add_on matcher" do
     before do
-      line_item.add_ons = product.add_ons
+      line_item.add_ons = product.add_ons.map { |add_on| {master_id: add_on.id} }
       line_item.save!
       order.line_items.first.reload
     end
 
     it "matches to the correct line item with add ones" do
-      options = {add_ons: line_item.add_ons.map { |add| {id: add.id} }}
+      options = {add_ons: line_item.add_ons.map { |add| {master_id: add.master.id} }}
       expect(order.add_on_matcher(order.line_items.first, options)).to be true
     end
 
@@ -38,19 +38,19 @@ describe Spree::Order, :type => :model do
     end
 
     it "returns false with different add ons" do
-      options = {add_ons: product_two.add_ons.map { |add| {id: add.id} }}
+      options = {add_ons: product_two.add_ons.map { |add| {master_id: add.id} }}
       expect(order.add_on_matcher(order.line_items.first, options)).to be false
     end
 
     it "returns false with no product add ons" do
-      options = {add_ons: product_two.add_ons.map { |add| {id: add.id} }}
+      options = {add_ons: product_two.add_ons.map { |add| {master_id: add.id} }}
       expect(order.add_on_matcher(order.line_items.first, options)).to be false
     end
   end
 
   describe "when add on is deleted" do
     before do
-      order.line_items.first.add_ons = product.add_ons
+      order.line_items.first.add_ons = product.add_ons.map { |add_on| {master_id: add_on.id} }
       line_item.save!
       order.line_items.first.reload
     end

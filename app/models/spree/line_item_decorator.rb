@@ -6,6 +6,7 @@ module Spree
     after_save :persist_add_on_total
 
     attr_accessor :add_ons_to_add
+    attr_accessor :add_on_props
 
     has_many :add_ons, through: :adjustments, source: :source, source_type: "Spree::AddOn"
 
@@ -16,9 +17,16 @@ module Spree
       Spree::AddOn.with_deleted.joins(:adjustment).where("source_id = spree_add_ons.id AND adjustable_id = ?", id)
     end
 
+    # add_ons = [
+    #   {
+    #     id: 123,
+    #     master_id: 1
+    #     values: {}
+    #   },
+    #   ...
+    # ]
     def add_ons=(*new_add_ons)
-      add_ons = Spree::AddOn.master.find(new_add_ons.flatten!.map { |add| add[:id] })
-      @add_ons_to_add = add_ons
+      setup_add_ons(new_add_ons)
       ensure_valid_add_ons
     end
 
@@ -32,7 +40,21 @@ module Spree
 
     private
 
-    def attach_add_ons(new_add_ons = @add_ons_to_add)
+    def setup_add_ons(*new_add_ons)
+      @add_ons_to_add = []
+      master = Spree::AddOn.master.find(new_add_ons.flatten!.map { |add| add[:master_id] })
+      master.each do |master|
+        add_hash = new_add_ons.select { |ao| ao[:master_id] == master.id }.first
+        value = add_hash[:values] || {}
+        @add_ons_to_add.push({
+                                 master: master,
+                                 values: value
+                             })
+      end
+
+    end
+
+    def attach_add_ons
       return if @add_ons_to_add.nil?
 
       if errors.any?
@@ -41,8 +63,8 @@ module Spree
 
       adjustments.add_ons.destroy_all
 
-      new_add_ons.each do |add_on|
-        add_on.master.attach_add_on(self)
+      @add_ons_to_add.each do |hash|
+        hash[:master].attach_add_on(self, hash[:values])
       end
 
       # TODO find away so that this is called implicitly
@@ -53,7 +75,11 @@ module Spree
 
     def ensure_valid_add_ons
       current_add_ons = add_ons
-      current_add_ons.concat(add_ons_to_add) unless add_ons_to_add.nil?
+
+      if add_ons_to_add.present?
+        current_add_ons.concat(add_ons_to_add.map {|add_on| add_on[:master] })
+      end
+
       invalid_add_ons = current_add_ons.map(&:master) - product.add_ons
       unless current_add_ons.empty? || invalid_add_ons.empty?
         invalid_message = invalid_add_ons.map { |add| add.name }.join(", ") + (invalid_add_ons.length > 1 ? " are" : " is")

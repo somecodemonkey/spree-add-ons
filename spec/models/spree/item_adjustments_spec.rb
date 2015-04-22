@@ -9,7 +9,7 @@ module Spree
       let (:subject) { ItemAdjustments.new(line_item) }
 
       before do
-        line_item.add_ons = [add_on]
+        line_item.add_ons = [add_on].map { |add_on| {master_id: add_on.id} }
         line_item.save!
       end
 

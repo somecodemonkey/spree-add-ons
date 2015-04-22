@@ -38,7 +38,7 @@ module Spree
                      options: {
                          add_ons: [
                              {
-                                 id: add_on_one.id
+                                 master_id: add_on_one.id
                              }
                          ]
                      }
@@ -58,7 +58,7 @@ module Spree
                      options: {
                          add_ons: [
                              {
-                                 id: add_on_two.id
+                                 master_id: add_on_two.id
                              }
                          ]
                      }
@@ -78,7 +78,7 @@ module Spree
                     :options => {
                         add_ons: [
                             {
-                                id: add_on_one.id
+                                master_id: add_on_one.id
                             }
                         ]
                     }
@@ -96,7 +96,7 @@ module Spree
                     :options => {
                         add_ons: [
                             {
-                                id: add_on_two.id
+                                master_id: add_on_two.id
                             }
                         ]
                     }
@@ -110,7 +110,7 @@ module Spree
 
       before(:each) do
         product.add_ons = [add_on_one, add_on_two]
-        line_item.add_ons = [add_on_one, add_on_two]
+        line_item.add_ons = [add_on_one, add_on_two].map { |add_on| {master_id: add_on.id} }
         line_item.save!
       end
 

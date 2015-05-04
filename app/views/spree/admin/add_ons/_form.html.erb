@@ -17,11 +17,18 @@
           <%= f.label :active, "Active" %><br>
           <%= f.check_box :active, {}, "true", "false" %>
       <% end %>
+
+      <%= f.hidden_field :is_master, value: true %><br>
     </div>
   </div>
 
   <div class="row">
     <div class="four columns omega">
+      <%= f.field_container :type do %>
+          <%= f.label :type, Spree.t(:type) %>
+          <%= f.select :type, options_for_select(Spree::AddOn.types.collect { |klass| [klass.display_name, klass.name] }, selected: @add_on.class.name), {}, :class => 'select2 fullwidth' %>
+      <% end %>
+
       <% field_name = "[add_on][calculator_type]" %>
       <%= label_tag field_name, Spree.t(:calculator) %>
       <%= select_tag field_name, options_from_collection_for_select(@calculators, :to_s, :description), :class => 'type-select select2 fullwidth' %>
@@ -52,15 +59,6 @@
 
   <div class="row">
     <div class="eight columns omega">
-      <%= f.field_container :option_inputs do %>
-          <%= preference_fields(@add_on, f) %>
-          <small>Comma separated list of inputs.</small>
-      <% end %>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="eight columns omega">
       <%= f.field_container :description do %>
           <%= f.label :description, "Description" %><br>
           <%= f.text_area :description, class: "fullwidth", placeholder: 'Something about this add on' %>
@@ -70,26 +68,57 @@
 
 
   <div class="row">
-    <%= f.fields_for :images, Spree::Image.new do |img| %>
-        <% unless @images.empty? %>
-            <div class="four columns omega">
-              <% @images.each do |image| %>
-                  <div data-hook="thumbnail" class="field alpha three columns align-center">
-                    <%= f.label Spree.t(:thumbnail) %><br>
-                    <%= image_tag image.attachment.url(:small) %>
-                  </div>
-              <% end %>
-            </div>
-        <% end %>
+    <% @add_on.option_types.each do |opt| %>
+        <table class="index six columns">
+          <colgroup>
+            <col style="width: 80%;">
+            <col style="width: 10%;">
+            <col style="width: 10%;">
+          </colgroup>
+          <thead>
+          <tr>
+            <td><%= opt.presentation %></td>
+            <td>Image</td>
+          </tr>
+          </thead>
+          <tbody>
+          <% options = opt.option_values.map { |o| o.name } %>
+          <% images = @add_on.images.select {|img| options.include?(img.preferred_option_value) } %>
+          <% (opt.option_values.length - images.length).times { images.push(@add_on.images.build) } %>
+          <%= f.fields_for :images, images do |img| %>
+              <tr>
+                <td>
+                  <%= img.select :preferred_option_value, options_from_collection_for_select(opt.option_values, :name, :presentation, img.object.preferred_option_value), {}, class: 'select2 fullwidth' %>
+                </td>
+                <td>
+                  <% if img.object.attachment.present? %>
+                      <div data-hook="thumbnail" class="add-on-option-image">
+                        <%= image_tag img.object.attachment.url(:small) %>
+                      </div>
+                  <% else %>
+                      <div data-hook="file" class="field">
+                        <%= img.label :attachment, Spree.t(:filename) %><br>
+                        <%= img.file_field :attachment %>
+                        <%= img.hidden_field :viewable_id, :value => @add_on.id %>
+                      </div>
+                  <% end %>
+                </td>
+                <td class="actions">
+                  <%= link_to '', 'javascript:void(0);', class: 'edit-line-item-design fa fa-edit no-text with-tip' %>
+                </td>
+              </tr>
+          <% end %>
+          </tbody>
 
-        <div class="eight columns omega">
-          <div data-hook="file" class="field">
-            <%= img.label :attachment, Spree.t(:filename) %><br>
-            <%= img.file_field :attachment %>
-            <%= img.hidden_field :viewable_id, :value => @add_on.id %>
-          </div>
-        </div>
+        </table>
     <% end %>
   </div>
 
 </div>
+
+
+<style>
+    .add-on-option-image > img {
+        max-height: 75px;
+    }
+</style>

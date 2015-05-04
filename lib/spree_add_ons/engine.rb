@@ -19,6 +19,13 @@ module SpreeAddOns
         Rails.configuration.cache_classes ? require(c) : load(c)
       end
 
+      # force load for development
+      if Rails.env.development?
+        Dir.glob(File.join(File.dirname(__FILE__), '../../app/models/spree/add_on/*.rb')) do |c|
+          Rails.configuration.cache_classes ? require(c) : load(c)
+        end
+      end
+
       if Rails.env.test?
         Dir.glob(File.join(File.dirname(__FILE__), './overrides/**/*_decorator*.rb')) do |c|
           Rails.configuration.cache_classes ? require(c) : load(c)
@@ -40,13 +47,6 @@ module SpreeAddOns
       if Spree::Order.table_exists?
         Spree::Order.register_line_item_comparison_hook(:add_on_matcher)
         Spree::Order.register_update_hook(:persist_add_on_totals)
-      end
-
-      # Eager load classes into memory so we can know which subclasses exist
-      unless Rails.env.production?
-        ActionDispatch::Reloader.to_prepare do
-          # Rails.application.eager_load!
-        end
       end
     end
 

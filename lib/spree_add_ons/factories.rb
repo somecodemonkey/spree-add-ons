@@ -2,6 +2,7 @@ FactoryGirl.define do
 
   factory :add_on, class: Spree::AddOn do
     name "bag"
+    master_type "Spree::AddOn"
     description "This is my bag. There are many like it, but this one is mine."
     sku "ABC-123"
     is_master true
@@ -17,11 +18,12 @@ FactoryGirl.define do
     after(:create) { |add| add.calculator.set_preference(:amount, 15.0) }
   end
 
-  factory :other_other_add_on, class: Spree::AddOn do
+  factory :other_other_add_on, class: Spree::AddOn::GiftWrapping do
     name "gift wrapping"
     description "wrap that shiz"
     sku "WRAP-123"
     is_master true
+    master_type "Spree::AddOn::GiftWrapping"
     calculator
     after(:create) { |add| add.calculator.set_preference(:amount, 20.0) }
   end

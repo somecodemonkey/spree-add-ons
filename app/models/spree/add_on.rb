@@ -19,18 +19,16 @@ module Spree
     has_one :adjustment, as: :source, dependent: :destroy
     has_many :images, as: :viewable, dependent: :destroy, class_name: "Spree::AddOnImage"
     has_and_belongs_to_many :products
-    has_and_belongs_to_many :option_types, join_table: :spree_option_types_add_ons
-    has_and_belongs_to_many :option_values, join_table: :spree_option_values_add_ons
 
-    # Self relation
+    # Self polymorphic(?) relation yo
     # master is the AddOn itself
     # option is a child AddOn that contains the stored option_value/input(?) for the add on
-    belongs_to :master, class_name: "Spree::AddOn"
-    has_many :options, class_name: "Spree::AddOn", foreign_key: "master_id"
+    belongs_to :master, class_name: "#{self.to_s}"
+    has_many :options, class_name: "#{self.to_s}", foreign_key: "master_id"
 
     delegate :adjust, :compute_amount, to: :adjuster
 
-    accepts_nested_attributes_for :images
+    accepts_nested_attributes_for :images, :allow_destroy => true
 
     def adjuster
       @adjuster ||= Spree::AddOnAdjuster.new(self)
@@ -45,8 +43,8 @@ module Spree
       end
     end
 
-    def attach_add_on(line_item, props = {})
-      new_add_on = create_option(props)
+    def attach_add_on(line_item, values = {})
+      new_add_on = create_option(values)
       adjustment = adjuster.adjust(line_item)
 
       if adjustment.present?
@@ -55,15 +53,25 @@ module Spree
       end
     end
 
-    def options=(options = {})
-      self.option_values.destroy_all
-      options.each do |name, value|
-        set_option_value(name, value)
+    def values
+      preferences
+    end
+
+    def values=(props)
+      props.keys.each do |key|
+        if has_preference? key.to_sym
+          set_preference(key.to_sym, props[key])
+        end
       end
     end
 
-    def get_option_image(option)
-      images.select { |img| img.preferred_option_value_id == option.id }.first
+    def as_json(opts = {})
+      super(opts.merge(
+                only: Spree::Api::ApiHelpers.add_on_attributes,
+                methods: [:values],
+                include: [:images]
+            )
+      )
     end
 
     def self.display_name
@@ -76,34 +84,18 @@ module Spree
 
     private
 
-    def create_option(options)
+    def create_option(values)
       master.options.create!({
+                                 type: type,
                                  master: master,
                                  name: master.name,
-                                 options: options
+                                 values: values
                              })
-    end
-
-    def set_option_value(opt_name, opt_value)
-      return if self.is_master
-
-      option_type = Spree::OptionType.where(name: opt_name).first_or_initialize do |o|
-        o.presentation = opt_name
-        o.save!
-      end
-
-      option_value = Spree::OptionValue.where(option_type_id: option_type.id, name: opt_value).first_or_initialize do |o|
-        o.presentation = opt_value
-        o.save!
-      end
-
-      self.option_values << option_value
-      self.save
     end
 
     def touch_products
       products.each(&:touch)
     end
+
   end
 end
-# require_dependency 'spree/add_on'

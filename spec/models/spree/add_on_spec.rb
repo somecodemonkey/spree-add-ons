@@ -42,10 +42,20 @@ describe Spree::AddOn do
     end
   end
 
+  describe "serialize" do
+    let(:attributes) { [:id, :master_id, :images, :is_master, :type, :name, :values] }
+    let(:add_on) { create(:add_on) }
+
+    it "should contain the right attributes" do
+      puts add_on.as_json.inspect
+      expect(add_on.as_json).to have_attributes(attributes)
+    end
+  end
+
   describe "option" do
-    let(:add_on) { create(:add_on, option_types: [create(:option_type)]) }
-    let(:product) { create(:product, add_ons: [add_on, create(:other_other_add_on)]) }
-    let(:option_value) { create(:option_value) }
+    let(:add_on) { create(:add_on) }
+    let(:gift_wrapping) { create(:other_other_add_on) }
+    let(:product) { create(:product, add_ons: [add_on, gift_wrapping]) }
     let(:line_item) { create(:line_item, product: product) }
 
     it "creates a valid option" do
@@ -56,11 +66,11 @@ describe Spree::AddOn do
     end
 
     it "creates a valid option with values" do
-      add_on.attach_add_on(line_item, {"foo-size-1" => "Size-1"})
+      gift_wrapping.attach_add_on(line_item, {color: "red"})
       expect(line_item.add_ons.count).to eql 1
-      expect(line_item.add_ons.first.master_id).to eql add_on.id
-      expect(line_item.add_ons.first.option_values.count).to eql 1
-      expect(line_item.add_ons.first.option_values.first.name).to eql "Size-1"
+      expect(line_item.add_ons.first.is_a?(gift_wrapping.class)).to be true
+      expect(line_item.add_ons.first.master_id).to eql gift_wrapping.id
+      expect(line_item.add_ons.first.preferred_color).to eql "red"
     end
   end
 

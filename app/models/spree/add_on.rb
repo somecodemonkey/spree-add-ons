@@ -30,6 +30,9 @@ module Spree
 
     accepts_nested_attributes_for :images, :allow_destroy => true
 
+    cattr_accessor :permitted_values
+    self.permitted_values = Set.new
+
     def adjuster
       @adjuster ||= Spree::AddOnAdjuster.new(self)
     end
@@ -76,10 +79,6 @@ module Spree
 
     def self.display_name
       'Basic'
-    end
-
-    def self.types
-      Spree::AddOn.subclasses.push(Spree::AddOn)
     end
 
     private

@@ -3,7 +3,9 @@ module Spree
     LineItemsController.class_eval do
       before_action :set_line_item, only: [:show]
 
-      self.line_item_options << {add_ons: [:id, :master_id, :options]}
+      # Spree::AddOn.permitted_values.to_a
+      # todo find away so controller doesnt know specific values
+      self.line_item_options << {add_ons: [:id, :master_id, values: [:color]]}
 
       private
 

@@ -14,7 +14,7 @@ module Spree
     render_views
 
     let (:user) { create(:user, spree_api_key: rand) }
-    let (:add_on_one) { create(:add_on) }
+    let (:add_on_one) { create(:other_other_add_on) }
     let (:add_on_two) { create(:other_add_on) }
     let (:product) { create(:product, add_ons: [add_on_one]) }
     let (:line_item) { create(:line_item, variant: create(:variant, product: product)) }
@@ -38,7 +38,10 @@ module Spree
                      options: {
                          add_ons: [
                              {
-                                 master_id: add_on_one.id
+                                 master_id: add_on_one.id,
+                                 values: {
+                                     color: "red"
+                                 }
                              }
                          ]
                      }
@@ -47,6 +50,7 @@ module Spree
         order.line_items.reload
         expect(order.line_items.count).to eql 2
         expect(order.line_items.second.add_ons.first.master.id).to eql add_on_one.id
+        expect(json_response["add_ons"][0]["values"]["color"]).to eql "red"
         expect(response.status).to eq(201)
       end
 
@@ -78,7 +82,10 @@ module Spree
                     :options => {
                         add_ons: [
                             {
-                                master_id: add_on_one.id
+                                master_id: add_on_one.id,
+                                values: {
+                                    color: "blue"
+                                }
                             }
                         ]
                     }
@@ -86,6 +93,7 @@ module Spree
         expect(response.status).to eq(200)
         expect(json_response).to have_attributes(attributes)
         expect(json_response["add_ons"][0]["master_id"]).to eql add_on_one.id
+        expect(json_response["add_ons"][0]["values"]["color"]).to eql "blue"
       end
 
       it "with an invalid add_on" do

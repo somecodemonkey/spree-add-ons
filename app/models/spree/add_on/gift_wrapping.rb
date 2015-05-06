@@ -5,6 +5,8 @@ module Spree
     # define the options for this add on via preferences
     preference :color, :string
 
+    self.permitted_values << :color
+
     def self.display_name
       'Gift Wrapping'
     end

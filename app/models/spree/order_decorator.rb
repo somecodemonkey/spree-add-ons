@@ -12,10 +12,14 @@ Spree::Order.class_eval do
   # Hook for Spree 2.4 line items options matcher
   # Notes: The only way to distinctly match will be to include ALL the line_items add_ons
   def add_on_matcher(line_item, options)
-    if line_item.add_ons.present?
-      current_add_ons = line_item.add_ons.map(&:master_id)
+    if (options[:add_ons] || []).empty? && line_item.add_ons.empty?
+      return true
     end
-    return current_add_ons.present? && options.present? && (current_add_ons - options[:add_ons].map{ |add| add[:master_id] }).empty?
+
+    line_item_add_ons = line_item.add_ons.map(&:master_id)
+    add_ons = options[:add_ons] || []
+
+    return line_item_add_ons.present? && add_ons.present? && (line_item_add_ons - add_ons.map{ |add| add[:master_id] if add.has_key?(:master_id)}).empty?
   end
 
   def line_item_add_ons

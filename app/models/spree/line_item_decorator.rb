@@ -8,13 +8,15 @@ module Spree
     attr_accessor :add_ons_to_add
     attr_accessor :add_on_props
 
-    has_many :add_ons, through: :adjustments, source: :source, source_type: "Spree::AddOn"
+    has_many :add_ons, through: :adjustments, source: :source
 
     def add_ons
       # Come on rails get your shit together
       # Cannot unscope default for soft deletes
       # https://github.com/rails/rails/issues/10643
-      Spree::AddOn.with_deleted.joins(:adjustment).where("source_id = spree_add_ons.id AND adjustable_id = ?", id)
+      # if we remove a subclass file...
+      klasses = Spree::AddOn.subclasses.push(Spree::AddOn).map{|klass| "'#{klass.to_s}'"}.join(",")
+      Spree::AddOn.unscoped.joins("INNER JOIN spree_adjustments ON spree_adjustments.source_id = spree_add_ons.id AND spree_adjustments.source_type IN (#{klasses})").where("source_id = spree_add_ons.id AND adjustable_id = ?", id)
     end
 
     # add_ons = [

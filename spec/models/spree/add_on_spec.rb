@@ -47,7 +47,6 @@ describe Spree::AddOn do
     let(:add_on) { create(:add_on) }
 
     it "should contain the right attributes" do
-      puts add_on.as_json.inspect
       expect(add_on.as_json).to have_attributes(attributes)
     end
   end
